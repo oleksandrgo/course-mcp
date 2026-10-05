@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hillel MAX — Урок 8 · Використання prompts в MCP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="deck" id="deck">
+      <!-- 1. Титул -->
+      <section class="slide slide--active" data-slide="0" aria-label="Титульний слайд">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/main%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--title">
+          <img
+            class="slide__logo"
+            src="../video%20and%20pcitures/Hillel%20MAX%20Logo/logo-w.svg"
+            alt="Hillel MAX"
+            width="280"
+            height="39"
+          />
+          <p class="slide__eyebrow js-reveal">
+            <span class="slide__tech-chip">
+              <img src="../video%20and%20pcitures/icons/mcp-color.svg" alt="" width="20" height="20" />
+              IT · Model Context Protocol
+            </span>
+          </p>
+          <h1 class="slide__title js-reveal">Використання prompts в MCP</h1>
+          <p class="slide__subtitle js-reveal">Шаблони запитів для типових сценаріїв агента</p>
+          <div class="tech-chips js-reveal" aria-hidden="true">
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/python-color.svg" alt="" />Python</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/mcp-color.svg" alt="" />FastMCP</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/mcp-color.svg" alt="" />prompts</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/cursor-color.svg" alt="" />Cursor</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. План -->
+      <section class="slide" aria-label="План заняття">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--plan">
+          <p class="slide__eyebrow slide__eyebrow--accent js-reveal-plan-header">Урок 8</p>
+          <h2 class="slide__heading js-reveal-plan-header">План заняття</h2>
+          <ol class="plan-list">
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">01</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Вступ</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">02</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/json.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Що таке prompts</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">03</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Навіщо і коли використовувати</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">04</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/python.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Приклад: аналіз авто</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">05</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/json.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Як описувати prompts</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">06</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Практика</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Block 1: Вступ -->
+      <section class="slide slide--block-intro" aria-label="Блок 1 — Вступ">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 1</p>
+          <h2 class="slide__title js-reveal">Вступ</h2>
+          <p class="slide__subtitle js-reveal">Від tools до prompts</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Контекст лекції">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Вступ</p>
+          <h2 class="slide__heading js-reveal">Що вже є</h2>
+          <p class="slide__lead js-reveal">
+            У qauto MCP server уже працюють <strong>tools</strong>: <code>signup</code>, <code>signin</code>, <code>add_car</code>, <code>get_cars</code>.
+          </p>
+          <p class="slide__lead js-reveal">
+            Сьогодні додаємо інтерфейс <strong>prompts</strong> — готові шаблони запитів для типових сценаріїв.
+          </p>
+        </div>
+      </section>
+
+      <!-- Block 2: Що таке prompts -->
+      <section class="slide slide--block-intro" aria-label="Блок 2 — Що таке prompts">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 2</p>
+          <h2 class="slide__title js-reveal">Що таке prompts</h2>
+          <p class="slide__subtitle js-reveal">Готові шаблони взаємодії</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Визначення prompts">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Що таке prompts</p>
+          <h2 class="slide__heading js-reveal">Визначення</h2>
+          <p class="slide__lead js-reveal">
+            <strong>Prompts</strong> — попередньо визначені шаблони взаємодії для типових сценаріїв.
+          </p>
+          <p class="slide__lead js-reveal">
+            Вони уніфікують складні запити і зменшують варіативність формулювань користувача.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Prompts vs tools vs resources">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Що таке prompts</p>
+          <h2 class="slide__heading js-reveal">Не tools і не resources</h2>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal"><strong>Tools</strong> — дії (API, створення запису, запуск процесу)</li>
+            <li class="content-list__item js-reveal"><strong>Resources</strong> — дані й контекст (файли, схеми, документи)</li>
+            <li class="content-list__item js-reveal"><strong>Prompts</strong> — стандартизований спосіб постановки задачі моделі</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Приклади prompts">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Що таке prompts</p>
+          <h2 class="slide__heading js-reveal">Приклади</h2>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal"><code>code-review</code> — ревʼю коду з чеклистом</li>
+            <li class="content-list__item js-reveal"><code>summarize-meeting</code> — підсумок зустрічі</li>
+            <li class="content-list__item js-reveal"><code>analyze_cars</code> — аналіз авто: таблиця, mileage, статуси</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Як виглядає для користувача">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Що таке prompts</p>
+          <h2 class="slide__heading js-reveal">Як це виглядає для користувача</h2>
+          <p class="slide__lead js-reveal">
+            Користувач <strong>явно обирає</strong> prompt у Host (Cursor, Claude Desktop) — prompts є user-controlled.
+          </p>
+          <p class="slide__lead js-reveal">
+            За потреби підставляє аргументи — і модель одразу працює за готовою структурою, без довгого пояснення в чаті.
+          </p>
+        </div>
+      </section>
+
+      <!-- Block 3: Навіщо і коли -->
+      <section class="slide slide--block-intro" aria-label="Блок 3 — Навіщо і коли">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 3</p>
+          <h2 class="slide__title js-reveal">Навіщо і коли використовувати</h2>
+          <p class="slide__subtitle js-reveal">Практичні правила + протокол</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Навіщо prompts">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Навіщо і коли</p>
+          <h2 class="slide__heading js-reveal">Навіщо</h2>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal">Уніфікувати повторювані запити команди</li>
+            <li class="content-list__item js-reveal">Не писати довгий промпт щоразу вручну</li>
+            <li class="content-list__item js-reveal">Дати моделі стабільну інструкцію</li>
+            <li class="content-list__item js-reveal">Контролювати формат відповіді</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Протокол і FastMCP">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Навіщо і коли</p>
+          <h2 class="slide__heading js-reveal">У FastMCP</h2>
+          <p class="slide__lead js-reveal">
+            Під час ініціалізації Server повідомляє Host список prompts.
+          </p>
+          <p class="slide__lead js-reveal">
+            Host викликає <code>prompts/get</code> — Server повертає текст або messages. У коді: декоратор <code>@mcp.prompt()</code>.
+          </p>
+        </div>
+      </section>
+
+      <!-- Block 4: Приклад analyze_cars -->
+      <section class="slide slide--block-intro" aria-label="Блок 4 — Приклад аналізу авто">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 4</p>
+          <h2 class="slide__title js-reveal">Приклад: аналіз авто</h2>
+          <p class="slide__subtitle js-reveal">Prompt analyze_cars для qauto</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Ідея analyze_cars">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Приклад</p>
+          <h2 class="slide__heading js-reveal">Ідея</h2>
+          <p class="slide__lead js-reveal">
+            Користувач не пише довгий текст вручну. Обирає prompt <code>analyze_cars</code> — і отримує стандартизовану інструкцію.
+          </p>
+          <p class="slide__lead js-reveal">
+            Модель аналізує всі авто, сортує за mileage і будує таблицю зі статусами.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Що робить prompt">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Приклад</p>
+          <h2 class="slide__heading js-reveal">Що робить prompt</h2>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal">Tools: <code>get_cars</code>, за потреби <code>signin</code></li>
+            <li class="content-list__item js-reveal">Повна інформація по кожному авто</li>
+            <li class="content-list__item js-reveal">Сортування за <code>mileage</code>: від більшого до меншого</li>
+            <li class="content-list__item js-reveal">Відповідь у вигляді <strong>таблиці</strong></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Статуси mileage">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Приклад</p>
+          <h2 class="slide__heading js-reveal">Статуси за mileage</h2>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal"><code>mileage &lt; 10000</code> → зелений</li>
+            <li class="content-list__item js-reveal"><code>10000–50000</code> → жовтий</li>
+            <li class="content-list__item js-reveal"><code>mileage &gt; 50000</code> → червоний</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide slide--code" aria-label="Код analyze_cars">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--code">
+          <p class="slide__eyebrow js-reveal">Приклад</p>
+          <h2 class="slide__heading js-reveal">Код на FastMCP</h2>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>@mcp.prompt()
+def analyze_cars() -> str:
+    """Аналіз авто: таблиця, mileage, статуси."""
+    return (
+        "Проаналізуй усі авто користувача.\n"
+        "1) signin якщо треба · 2) get_cars\n"
+        "3) уся інформація по авто\n"
+        "4) сортуй за mileage DESC\n"
+        "5) markdown-таблиця\n"
+        "6) статус: &lt;10k зелений, "
+        "10k–50k жовтий, &gt;50k червоний"
+    )</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--diagram diagram-slide" aria-label="Як це працює по кроках">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--diagram slide__inner--seq-diagram">
+          <p class="slide__eyebrow js-reveal">Приклад</p>
+          <h2 class="slide__heading js-reveal">Як це працює по кроках</h2>
+          <div
+            class="mcp-seq-flow js-reveal"
+            role="img"
+            aria-label="Sequence diagram: User, App, LLM, MCP Server — flow з prompts і tools"
+          >
+            <div class="mcp-seq-flow__canvas">
+              <div class="mcp-seq-flow__participants mcp-seq-flow__step">
+                <div class="mcp-seq-flow__participant">
+                  <span class="mcp-seq-flow__participant-name">User</span>
+                </div>
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--app">
+                  <span class="mcp-seq-flow__participant-name">App</span>
+                  <span class="mcp-seq-flow__participant-hint">Host</span>
+                </div>
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--llm">
+                  <span class="mcp-seq-flow__participant-name">LLM</span>
+                </div>
+                <div class="mcp-seq-flow__participant">
+                  <span class="mcp-seq-flow__participant-name">MCP Server</span>
+                </div>
+              </div>
+
+              <div class="mcp-seq-flow__lifelines mcp-seq-flow__step" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+              </div>
+
+              <div class="mcp-seq-flow__stage">
+                <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                  <div class="mcp-seq-flow__track mcp-seq-flow__track--c1-2">
+                    <span class="mcp-seq-flow__label">Selects prompt</span>
+                    <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span>
+                  </div>
+                </div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                  <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4">
+                    <span class="mcp-seq-flow__label">Initializes connection</span>
+                    <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span>
+                  </div>
+                </div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                  <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4 mcp-seq-flow__track--reverse">
+                    <span class="mcp-seq-flow__label">Available tools &amp; prompts</span>
+                    <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span>
+                  </div>
+                </div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                  <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4">
+                    <span class="mcp-seq-flow__label">prompts/get</span>
+                    <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span>
+                  </div>
+                </div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                  <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4 mcp-seq-flow__track--reverse">
+                    <span class="mcp-seq-flow__label">Prompt messages</span>
+                    <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span>
+                  </div>
+                </div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                  <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3">
+                    <span class="mcp-seq-flow__label">Sends prompt + tools</span>
+                    <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span>
+                  </div>
+                </div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                  <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3 mcp-seq-flow__track--reverse">
+                    <span class="mcp-seq-flow__label">Responds with tool call</span>
+                    <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span>
+                  </div>
+                </div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                  <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4">
+                    <span class="mcp-seq-flow__label">Sends tool call</span>
+                    <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span>
+                  </div>
+                </div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                  <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4 mcp-seq-flow__track--reverse">
+                    <span class="mcp-seq-flow__label">Responds with tool response</span>
+                    <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span>
+                  </div>
+                </div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                  <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3">
+                    <span class="mcp-seq-flow__label">Sends tool response</span>
+                    <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span>
+                  </div>
+                </div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                  <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3 mcp-seq-flow__track--reverse">
+                    <span class="mcp-seq-flow__label">Responds with final answer</span>
+                    <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span>
+                  </div>
+                </div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                  <div class="mcp-seq-flow__track mcp-seq-flow__track--c1-2 mcp-seq-flow__track--reverse">
+                    <span class="mcp-seq-flow__label">Responds with final answer</span>
+                    <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mcp-seq-flow__participants mcp-seq-flow__participants--bottom">
+                <div class="mcp-seq-flow__participant">
+                  <span class="mcp-seq-flow__participant-name">User</span>
+                </div>
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--app">
+                  <span class="mcp-seq-flow__participant-name">App</span>
+                </div>
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--llm">
+                  <span class="mcp-seq-flow__participant-name">LLM</span>
+                </div>
+                <div class="mcp-seq-flow__participant">
+                  <span class="mcp-seq-flow__participant-name">MCP Server</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Block 5: Як описувати prompts -->
+      <section class="slide slide--block-intro" aria-label="Блок 5 — Як описувати prompts">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 5</p>
+          <h2 class="slide__title js-reveal">Як описувати prompts</h2>
+          <p class="slide__subtitle js-reveal">Іменування, description, аргументи</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Аудиторія опису">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Опис prompts</p>
+          <h2 class="slide__heading js-reveal">Хто читає опис</h2>
+          <p class="slide__lead js-reveal">
+            Docstring <strong>tool</strong> читає модель — вона вирішує, викликати чи ні.
+          </p>
+          <p class="slide__lead js-reveal">
+            <strong>Prompt</strong> обирає користувач або клієнт (список як slash-команди). Модель бачить контент уже після вибору.
+          </p>
+          <p class="slide__lead js-reveal">
+            Тому опис пишемо «для людини в списку», а не «для LLM, яка приймає рішення».
+          </p>
+        </div>
+      </section>
+
+      <section class="slide slide--code" aria-label="Іменування prompts">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--code">
+          <p class="slide__eyebrow js-reveal">Опис prompts</p>
+          <h2 class="slide__heading js-reveal">Іменування</h2>
+          <p class="slide__lead js-reveal">
+            Дієслово + предмет, коротко, як команда. Назва — це UI.
+          </p>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code># Добре
+@mcp.prompt()
+async def summarize_ticket(...): ...
+
+@mcp.prompt()
+async def draft_release_notes(...): ...
+
+# Погано
+@mcp.prompt()
+async def ticket_stuff(...): ...</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--code" aria-label="Description prompts">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--code">
+          <p class="slide__eyebrow js-reveal">Опис prompts</p>
+          <h2 class="slide__heading js-reveal">Description</h2>
+          <p class="slide__lead js-reveal">
+            Пишіть для вибору зі списку: що видає, межа застосування, що на вході.
+          </p>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>@mcp.prompt()
+async def summarize_ticket(ticket_id: str):
+    """
+    Стислий саммарі одного тікета:
+    суть, статус, останні коментарі.
+
+    Для одного тікета за ID — не для
+    списку і не для аналітики по кількох.
+    """</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--code" aria-label="Аргументи prompts">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--code">
+          <p class="slide__eyebrow js-reveal">Опис prompts</p>
+          <h2 class="slide__heading js-reveal">Аргументи</h2>
+          <p class="slide__lead js-reveal">
+            Prompt може бути без аргументів. Якщо вони є — description пишіть для людини в формі клієнта.
+          </p>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>@mcp.prompt()
+async def draft_release_notes(
+    version: str,
+    tone: str = "neutral",
+):
+    """
+    Чернетка release notes для версії.
+
+    Args:
+        version: Номер, наприклад "2.4.0".
+        tone: "neutral", "casual"
+              або "marketing".
+    """</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Block 6: Практика -->
+      <section class="slide slide--block-intro" aria-label="Блок 6 — Практика">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 6</p>
+          <h2 class="slide__title js-reveal">Практика</h2>
+          <p class="slide__subtitle js-reveal">Завдання і чекліст</p>
+        </div>
+      </section>
+
+      <!-- Фінал -->
+      <section class="slide" aria-label="Підсумки">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Фінал заняття</p>
+          <h2 class="slide__heading js-reveal">Підсумки</h2>
+          <p class="slide__lead js-reveal">
+            На цій лекції ми розібрали <strong>prompts</strong> у MCP: що це за інтерфейс, як додати їх до сервера і як описувати назву, description та аргументи для людини в списку.
+          </p>
+          <p class="slide__lead js-reveal">
+            Також зібрали практичний приклад — prompt <code>analyze_cars</code> з таблицею та статусами за mileage.
+          </p>
+          <p class="slide__lead js-reveal">
+            У наступній лекції перейдемо до <strong>resources</strong> в MCP.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <nav class="nav" aria-label="Навігація по слайдах">
+      <button type="button" class="nav__btn" id="prev" aria-label="Попередній слайд">←</button>
+      <span class="nav__progress" id="navProgress" aria-live="polite">1 / 25</span>
+      <div class="nav__dots" id="dots" role="tablist" aria-label="Слайди"></div>
+      <button type="button" class="nav__btn" id="next" aria-label="Наступний слайд">→</button>
+    </nav>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

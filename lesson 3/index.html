@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hillel MAX — Урок 3 · Основний концепт MCP архітектури</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="deck" id="deck">
+      <section class="slide slide--active" data-slide="0" aria-label="Титульний слайд">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/main%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--title">
+          <img
+            class="slide__logo"
+            src="../video%20and%20pcitures/Hillel%20MAX%20Logo/logo-w.svg"
+            alt="Hillel MAX"
+            width="280"
+            height="39"
+          />
+          <p class="slide__eyebrow js-reveal">
+            <span class="slide__tech-chip">
+              <img src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" width="20" height="20" />
+              IT · Model Context Protocol
+            </span>
+          </p>
+          <h1 class="slide__title js-reveal">Основний концепт MCP архітектури</h1>
+          <p class="slide__subtitle js-reveal">Host · Client · Server · Tools · MCP Flow</p>
+          <div class="tech-chips js-reveal" aria-hidden="true">
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/w/chatgpt.svg" alt="" />Host</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" />Client</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/w/docker.svg" alt="" />Server</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/w/python.svg" alt="" />SDK</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-slide="1" aria-label="План заняття">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--plan">
+          <p class="slide__eyebrow slide__eyebrow--accent js-reveal-plan-header">Урок 3</p>
+          <h2 class="slide__heading js-reveal-plan-header">План заняття</h2>
+          <ol class="plan-list">
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">01</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" width="32" height="32" />
+              <span class="plan-list__text">Архітектура MCP</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">02</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/jira.svg" alt="" width="32" height="32" />
+              <span class="plan-list__text">Tools, Resources і Prompts</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">03</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/chatgpt.svg" alt="" width="32" height="32" />
+              <span class="plan-list__text">MCP Flow та роль LLM</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Block 1: Архітектура MCP -->
+      <section class="slide slide--block-intro" aria-label="Блок 1 — Архітектура MCP">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 1</p>
+          <h2 class="slide__title js-reveal">Архітектура MCP</h2>
+          <p class="slide__subtitle js-reveal">Що таке MCP і хто бере участь у протоколі</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Що таке MCP">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Архітектура MCP</p>
+          <h2 class="slide__heading js-reveal">Що таке MCP</h2>
+          <p class="slide__lead js-reveal">
+            <strong>Model Context Protocol</strong> — стандарт передачі контексту мовним моделям: промпт, інструкції для tools, додаткові дані.
+          </p>
+          <p class="slide__lead js-reveal">
+            MCP — універсальний інтерфейс (аналог <strong>USB-C</strong>): один Server підключається до різних AI-додатків без змін.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="MCP Host">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--scenario">
+          <p class="slide__eyebrow js-reveal">Архітектура MCP</p>
+          <div class="component-slide">
+            <div class="scenario-card scenario-card--intro">
+              <img
+                class="scenario-card__icon js-reveal"
+                src="../video%20and%20pcitures/icons/w/chatgpt.svg"
+                alt=""
+                width="48"
+                height="48"
+              />
+              <div class="scenario-card__body">
+                <h2 class="slide__heading js-reveal">MCP Host</h2>
+                <p class="slide__lead js-reveal">
+                  <strong>Що це:</strong> AI-додаток, який використовує MCP для роботи з зовнішніми сервісами.
+                </p>
+              </div>
+            </div>
+            <div class="component-slide__details">
+              <div class="content-list__item component-block">
+                <p class="component-block__label">За що відповідає</p>
+                <p class="component-block__text">
+                  Отримує запит користувача, визначає потрібні tools або дані, ініціює взаємодію через MCP
+                  і формує фінальну відповідь.
+                </p>
+              </div>
+              <div class="content-list__item component-block">
+                <p class="component-block__label">Приклади</p>
+                <p class="component-block__text">Cursor, Claude Desktop, VS Code, кастомні AI-агенти.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="MCP Client">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--scenario">
+          <p class="slide__eyebrow js-reveal">Архітектура MCP</p>
+          <div class="component-slide">
+            <div class="scenario-card scenario-card--intro">
+              <img
+                class="scenario-card__icon js-reveal"
+                src="../video%20and%20pcitures/icons/w/mcp.svg"
+                alt=""
+                width="48"
+                height="48"
+              />
+              <div class="scenario-card__body">
+                <h2 class="slide__heading js-reveal">MCP Client</h2>
+                <p class="slide__lead js-reveal">
+                  <strong>Що це:</strong> компонент всередині Host, який говорить із MCP Server мовою протоколу.
+                </p>
+              </div>
+            </div>
+            <div class="component-slide__details">
+              <div class="content-list__item component-block">
+                <p class="component-block__label">За що відповідає</p>
+                <p class="component-block__text">
+                  Встановлює з'єднання з Server, надсилає запити і отримує відповіді. Один Client — один Server.
+                </p>
+              </div>
+              <div class="content-list__item component-block">
+                <p class="component-block__label">Приклади</p>
+                <p class="component-block__text">
+                  Кілька серверів у Cursor → Host створює окремий Client для Notion, GitHub, Jira.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="MCP Server">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--scenario">
+          <p class="slide__eyebrow js-reveal">Архітектура MCP</p>
+          <div class="component-slide">
+            <div class="scenario-card scenario-card--intro">
+              <img
+                class="scenario-card__icon js-reveal"
+                src="../video%20and%20pcitures/icons/w/docker.svg"
+                alt=""
+                width="48"
+                height="48"
+              />
+              <div class="scenario-card__body">
+                <h2 class="slide__heading js-reveal">MCP Server</h2>
+                <p class="slide__lead js-reveal">
+                  <strong>Що це:</strong> програма, яка надає AI-додатку стандартизований доступ до зовнішньої функціональності.
+                </p>
+              </div>
+            </div>
+            <div class="component-slide__details">
+              <div class="content-list__item component-block">
+                <p class="component-block__label">За що відповідає</p>
+                <p class="component-block__text">
+                  Експонує tools, resources і prompts; виконує дії і звертається до API, баз даних та інших сервісів.
+                </p>
+              </div>
+              <div class="content-list__item component-block">
+                <p class="component-block__label">Приклади</p>
+                <p class="component-block__text">
+                  Notion MCP Server, GitHub MCP Server, PostgreSQL MCP Server, власний сервер на Python.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="MCP Protocol">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--scenario">
+          <p class="slide__eyebrow js-reveal">Архітектура MCP</p>
+          <div class="component-slide">
+            <div class="scenario-card scenario-card--intro">
+              <img
+                class="scenario-card__icon js-reveal"
+                src="../video%20and%20pcitures/icons/w/json.svg"
+                alt=""
+                width="48"
+                height="48"
+              />
+              <div class="scenario-card__body">
+                <h2 class="slide__heading js-reveal">MCP Protocol</h2>
+                <p class="slide__lead js-reveal">
+                  <strong>Що це:</strong> стандарт взаємодії між Client і Server на основі <strong>JSON-RPC 2.0</strong>.
+                </p>
+              </div>
+            </div>
+            <div class="component-slide__details">
+              <div class="content-list__item component-block">
+                <p class="component-block__label">За що відповідає</p>
+                <p class="component-block__text">
+                  Формат запитів і відповідей, правила handshake, виклик tools і читання resources.
+                </p>
+              </div>
+              <div class="content-list__item component-block">
+                <p class="component-block__label">Приклади</p>
+                <p class="component-block__text">
+                  <code>initialize</code>, <code>tools/list</code>, <code>tools/call</code>, <code>resources/read</code>.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="MCP Protocol — JSON-RPC">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Архітектура MCP</p>
+          <h2 class="slide__heading js-reveal">MCP Protocol · JSON-RPC 2.0</h2>
+          <p class="slide__lead js-reveal">
+            Client і Server обмінюються <strong>JSON-повідомленнями</strong> за стандартом JSON-RPC 2.0:
+            <code>method</code>, <code>params</code>, <code>id</code> → <code>result</code> або <code>error</code>.
+          </p>
+          <div class="token-card js-reveal">
+            <pre class="slide__code"><code>{ "jsonrpc": "2.0", "id": 1,
+  "method": "tools/list", "params": {} }</code></pre>
+          </div>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal">
+              MCP-методи: <code>initialize</code>, <code>tools/list</code>, <code>tools/call</code>, <code>resources/read</code>
+            </li>
+            <li class="content-list__item js-reveal">
+              SDK формує JSON автоматично — ви описуєте tools, не протокол вручну
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide slide--diagram diagram-slide" aria-label="Схема Host-Client-Server">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--diagram">
+          <p class="slide__eyebrow js-reveal">Архітектура MCP</p>
+          <h2 class="slide__heading js-reveal">Як це працює</h2>
+          <div class="mcp-flow mcp-flow--four-col js-reveal" role="img" aria-label="MCP Host створює Client для кожного Server">
+            <div class="mcp-flow__lane">
+              <div class="mcp-flow__agents mcp-flow__step">
+                <div class="mcp-flow__node mcp-flow__node--agent">
+                  <img
+                    class="mcp-flow__agent-icon"
+                    src="../video%20and%20pcitures/icons/w/chatgpt.svg"
+                    alt=""
+                    width="40"
+                    height="40"
+                  />
+                  <span class="mcp-flow__label">MCP Host</span>
+                  <span class="mcp-flow__hint">Cursor · Claude · VS Code</span>
+                </div>
+                <p class="mcp-flow__note">Запит користувача → вибір tool або resource</p>
+              </div>
+
+              <div class="mcp-flow__client-group mcp-flow__step">
+                <div class="mcp-flow__pipe mcp-flow__pipe--left" aria-hidden="true">
+                  <span class="mcp-flow__line"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--a"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--b"></span>
+                </div>
+                <div class="mcp-flow__node mcp-flow__node--client">
+                  <img
+                    class="mcp-flow__hub-icon"
+                    src="../video%20and%20pcitures/icons/w/mcp.svg"
+                    alt=""
+                    width="32"
+                    height="32"
+                  />
+                  <span class="mcp-flow__label">Client</span>
+                  <span class="mcp-flow__hint">всередині Host</span>
+                </div>
+              </div>
+
+              <div class="mcp-flow__hub-group mcp-flow__step">
+                <div class="mcp-flow__pipe mcp-flow__pipe--left" aria-hidden="true">
+                  <span class="mcp-flow__line"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--a"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--b"></span>
+                </div>
+                <div class="mcp-flow__hub">
+                  <span class="mcp-flow__hub-ring" aria-hidden="true"></span>
+                  <img
+                    class="mcp-flow__hub-icon"
+                    src="../video%20and%20pcitures/icons/w/docker.svg"
+                    alt=""
+                    width="36"
+                    height="36"
+                  />
+                  <span class="mcp-flow__hub-title">Server</span>
+                  <span class="mcp-flow__hub-sub">tools · resources · prompts</span>
+                </div>
+              </div>
+
+              <div class="mcp-flow__services-group mcp-flow__step">
+                <div class="mcp-flow__pipe mcp-flow__pipe--left" aria-hidden="true">
+                  <span class="mcp-flow__line"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--a"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--b"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--c"></span>
+                </div>
+                <div class="mcp-flow__services-wrap">
+                  <p class="mcp-flow__services-title">Зовнішні сервіси</p>
+                  <div class="mcp-flow__services">
+                    <div class="mcp-flow__node mcp-flow__node--service">
+                      <span class="mcp-flow__service-icon">
+                        <img src="../video%20and%20pcitures/icons/notion.svg" alt="" width="22" height="22" />
+                      </span>
+                      <span class="mcp-flow__label">Notion</span>
+                    </div>
+                    <div class="mcp-flow__node mcp-flow__node--service">
+                      <span class="mcp-flow__service-icon">
+                        <img src="../video%20and%20pcitures/icons/w/figma.svg" alt="" width="22" height="22" />
+                      </span>
+                      <span class="mcp-flow__label">Figma</span>
+                    </div>
+                    <div class="mcp-flow__node mcp-flow__node--service">
+                      <span class="mcp-flow__service-icon">
+                        <img src="../video%20and%20pcitures/icons/w/jira.svg" alt="" width="22" height="22" />
+                      </span>
+                      <span class="mcp-flow__label">Jira</span>
+                    </div>
+                    <div class="mcp-flow__node mcp-flow__node--service">
+                      <span class="mcp-flow__service-icon">
+                        <img src="../video%20and%20pcitures/icons/w/git.svg" alt="" width="22" height="22" />
+                      </span>
+                      <span class="mcp-flow__label">GitHub</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="mcp-flow__caption mcp-flow__step">
+              Користувач → <strong>Host</strong> → <strong>Client</strong> → <strong>Server</strong> → зовнішній API → відповідь назад
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="MCP SDK">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--scenario">
+          <p class="slide__eyebrow js-reveal">Архітектура MCP</p>
+          <div class="component-slide">
+            <div class="scenario-card scenario-card--intro">
+              <img
+                class="scenario-card__icon js-reveal"
+                src="../video%20and%20pcitures/icons/w/python.svg"
+                alt=""
+                width="48"
+                height="48"
+              />
+              <div class="scenario-card__body">
+                <h2 class="slide__heading js-reveal">MCP SDK</h2>
+                <p class="slide__lead js-reveal">
+                  <strong>Що це:</strong> офіційні бібліотеки (Python, TypeScript тощо) для створення власного MCP Server
+                  без ручної реалізації протоколу.
+                </p>
+              </div>
+            </div>
+            <div class="component-slide__details">
+              <div class="content-list__item component-block">
+                <p class="component-block__label">Що робить SDK</p>
+                <ul class="component-block__list">
+                  <li>приховує низькорівневий JSON-RPC і transport</li>
+                  <li>обробляє lifecycle: <code>initialize</code>, handshake, відповіді</li>
+                  <li>автоматично обслуговує <code>tools/list</code> і <code>tools/call</code></li>
+                  <li>ви описуєте tools декораторами — SDK формує протокол</li>
+                </ul>
+              </div>
+              <div class="content-list__item component-block">
+                <p class="component-block__label">Де потрібен</p>
+                <p class="component-block__text">
+                  Host і Client зазвичай уже вбудовані в AI-додаток. <strong>SDK потрібен для написання Server.</strong>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="MCP SDK — приклад коду">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Архітектура MCP</p>
+          <h2 class="slide__heading js-reveal">MCP SDK · приклад</h2>
+          <p class="slide__lead js-reveal">
+            Найпростіший MCP Server на Python з одним tool <code>hello</code>:
+          </p>
+          <div class="token-card js-reveal">
+            <pre class="slide__code"><code>from mcp.server import Server
+from mcp.server.stdio import stdio_server
+
+app = Server("my-server")
+
+@app.list_tools()
+async def list_tools():
+    return [{"name": "hello", "description": "Say hello"}]
+
+@app.call_tool()
+async def call_tool(name, arguments):
+    return [{"type": "text", "text": "Hello, World!"}]
+
+async with stdio_server() as streams:
+    await app.run(*streams)</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Block 2: Tools, Resources і Prompts -->
+      <section class="slide slide--block-intro" aria-label="Блок 2 — Tools, Resources і Prompts">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 2</p>
+          <h2 class="slide__title js-reveal">Tools, Resources і Prompts</h2>
+          <p class="slide__subtitle js-reveal">Три інтерфейси MCP Server</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Tools — приклади">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--scenario">
+          <p class="slide__eyebrow js-reveal">Tools, Resources і Prompts</p>
+          <div class="scenario-card">
+            <img
+              class="scenario-card__icon js-reveal"
+              src="../video%20and%20pcitures/icons/w/jira.svg"
+              alt=""
+              width="48"
+              height="48"
+            />
+            <div class="scenario-card__body">
+              <h2 class="slide__heading js-reveal">Tools — дії</h2>
+              <p class="slide__lead js-reveal">
+                <code>create_notion_page</code> · <code>search_jira_issues</code> · <code>run_sql_query</code> ·
+                <code>get_figma_design_context</code> · <code>create_github_issue</code>
+              </p>
+              <p class="slide__lead js-reveal">
+                «Створи баг у Jira про помилку логіну» → LLM викликає <code>create_jira_issue</code> з title і description.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Resources — приклади">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--scenario">
+          <p class="slide__eyebrow js-reveal">Tools, Resources і Prompts</p>
+          <div class="scenario-card">
+            <img
+              class="scenario-card__icon js-reveal"
+              src="../video%20and%20pcitures/icons/w/mysql.svg"
+              alt=""
+              width="48"
+              height="48"
+            />
+            <div class="scenario-card__body">
+              <h2 class="slide__heading js-reveal">Resources — контекст</h2>
+              <p class="slide__lead js-reveal">
+                <strong>Static:</strong> <code>api-spec.json</code>, <code>schema.sql</code>, <code>README.md</code>, PDF
+              </p>
+              <p class="slide__lead js-reveal">
+                <strong>Dynamic:</strong> статус CI/CD, відкриті PR, сторінка Notion, feature flags
+              </p>
+              <p class="slide__lead js-reveal">
+                «Які поля в таблиці users?» → читання <code>db/schema.sql</code> без виклику tool.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Prompts — приклади">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--scenario">
+          <p class="slide__eyebrow js-reveal">Tools, Resources і Prompts</p>
+          <div class="scenario-card">
+            <img
+              class="scenario-card__icon js-reveal"
+              src="../video%20and%20pcitures/icons/w/chatgpt.svg"
+              alt=""
+              width="48"
+              height="48"
+            />
+            <div class="scenario-card__body">
+              <h2 class="slide__heading js-reveal">Prompts — шаблони</h2>
+              <p class="slide__lead js-reveal">
+                <code>code-review</code> · <code>summarize-meeting</code> · <code>design-to-code</code> ·
+                <code>write-api-test</code>
+              </p>
+              <p class="slide__lead js-reveal">
+                Зробити → <strong>tools</strong> · Прочитати → <strong>resources</strong> · Стандартизувати → <strong>prompts</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--code" aria-label="Tools, Resources і Prompts — код">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--code">
+          <p class="slide__eyebrow js-reveal">Tools, Resources і Prompts</p>
+          <h2 class="slide__heading js-reveal">Один файл — три сутності</h2>
+          <p class="slide__lead js-reveal">
+            Приклад MCP Server на Python: <strong>tool</strong>, <strong>resource</strong> і <strong>prompt</strong> в одному
+            <code>server.py</code>.
+          </p>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>from fastmcp import FastMCP
+
+mcp = FastMCP("demo-server")
+
+# Tool — дія
+@mcp.tool
+def create_jira_issue(title: str, description: str) -> str:
+    """Створити issue в Jira."""
+    return f"Issue created: {title}"
+
+# Resource — контекст
+@mcp.resource("db://schema.sql")
+def db_schema() -> str:
+    """Схема таблиць БД."""
+    return "CREATE TABLE users (id INT, email TEXT)"
+
+# Prompt — шаблон
+@mcp.prompt
+def code_review(path: str) -> str:
+    """Шаблон code review."""
+    return f"Review {path}: style, tests, security"
+
+if __name__ == "__main__":
+    mcp.run()</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Block 3: MCP Flow -->
+      <section class="slide slide--block-intro" aria-label="Блок 3 — MCP Flow">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 3</p>
+          <h2 class="slide__title js-reveal">MCP Flow</h2>
+          <p class="slide__subtitle js-reveal">Виконання tools та роль LLM</p>
+        </div>
+      </section>
+
+      <section class="slide slide--diagram diagram-slide" aria-label="Схема MCP Flow">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--diagram slide__inner--seq-diagram">
+          <p class="slide__eyebrow js-reveal">MCP Flow</p>
+          <h2 class="slide__heading js-reveal">Що куди надсилається</h2>
+          <div
+            class="mcp-seq-flow js-reveal"
+            role="img"
+            aria-label="Sequence diagram: User, App, LLM, MCP Server — 10 кроків взаємодії"
+          >
+            <div class="mcp-seq-flow__canvas">
+            <div class="mcp-seq-flow__participants mcp-seq-flow__step">
+              <div class="mcp-seq-flow__participant">
+                <span class="mcp-seq-flow__participant-name">User</span>
+              </div>
+              <div class="mcp-seq-flow__participant mcp-seq-flow__participant--app">
+                <span class="mcp-seq-flow__participant-name">App</span>
+                <span class="mcp-seq-flow__participant-hint">Host</span>
+              </div>
+              <div class="mcp-seq-flow__participant mcp-seq-flow__participant--llm">
+                <span class="mcp-seq-flow__participant-name">LLM</span>
+              </div>
+              <div class="mcp-seq-flow__participant">
+                <span class="mcp-seq-flow__participant-name">MCP Server</span>
+              </div>
+            </div>
+
+              <div class="mcp-seq-flow__lifelines mcp-seq-flow__step" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+              </div>
+
+            <div class="mcp-seq-flow__stage">
+
+              <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                <div class="mcp-seq-flow__track mcp-seq-flow__track--c1-2">
+                  <span class="mcp-seq-flow__label">Sends query</span>
+                  <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span>
+                </div>
+              </div>
+              <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4">
+                  <span class="mcp-seq-flow__label">Initializes connection</span>
+                  <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span>
+                </div>
+              </div>
+              <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4 mcp-seq-flow__track--reverse">
+                  <span class="mcp-seq-flow__label">Responds with available tools</span>
+                  <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span>
+                </div>
+              </div>
+              <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3">
+                  <span class="mcp-seq-flow__label">Sends query (with MCP tools)</span>
+                  <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span>
+                </div>
+              </div>
+              <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3 mcp-seq-flow__track--reverse">
+                  <span class="mcp-seq-flow__label">Responds with tool call</span>
+                  <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span>
+                </div>
+              </div>
+              <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4">
+                  <span class="mcp-seq-flow__label">Sends tool call</span>
+                  <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span>
+                </div>
+              </div>
+              <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4 mcp-seq-flow__track--reverse">
+                  <span class="mcp-seq-flow__label">Responds with tool response</span>
+                  <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span>
+                </div>
+              </div>
+              <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3">
+                  <span class="mcp-seq-flow__label">Sends tool response</span>
+                  <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span>
+                </div>
+              </div>
+              <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3 mcp-seq-flow__track--reverse">
+                  <span class="mcp-seq-flow__label">Responds with final answer</span>
+                  <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span>
+                </div>
+              </div>
+              <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                <div class="mcp-seq-flow__track mcp-seq-flow__track--c1-2 mcp-seq-flow__track--reverse">
+                  <span class="mcp-seq-flow__label">Responds with final answer</span>
+                  <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mcp-seq-flow__participants mcp-seq-flow__participants--bottom">
+              <div class="mcp-seq-flow__participant">
+                <span class="mcp-seq-flow__participant-name">User</span>
+              </div>
+              <div class="mcp-seq-flow__participant mcp-seq-flow__participant--app">
+                <span class="mcp-seq-flow__participant-name">App</span>
+              </div>
+              <div class="mcp-seq-flow__participant mcp-seq-flow__participant--llm">
+                <span class="mcp-seq-flow__participant-name">LLM</span>
+              </div>
+              <div class="mcp-seq-flow__participant">
+                <span class="mcp-seq-flow__participant-name">MCP Server</span>
+              </div>
+            </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Final -->
+      <section class="slide" aria-label="Підсумки">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Фінал заняття</p>
+          <h2 class="slide__heading js-reveal">Підсумки</h2>
+          <p class="slide__lead js-reveal">
+            На цій лекції ми розібрали <strong>архітектуру MCP</strong>: ролі Host, Client і Server, основу протоколу
+            та три інтерфейси сервера — tools, resources і prompts.
+          </p>
+          <p class="slide__lead js-reveal">
+            Також побачили <strong>MCP Flow</strong> — як застосунок, LLM і MCP Server взаємодіють під час виконання
+            запиту користувача.
+          </p>
+          <p class="slide__lead js-reveal">
+            У наступній лекції перейдемо до transport layer і створення власного MCP-сервера на Python.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <nav class="nav" aria-label="Навігація по слайдах">
+      <button type="button" class="nav__btn" id="prev" aria-label="Попередній слайд">←</button>
+      <span class="nav__progress" id="navProgress" aria-live="polite">1 / 19</span>
+      <div class="nav__dots" id="dots" role="tablist" aria-label="Слайди"></div>
+      <button type="button" class="nav__btn" id="next" aria-label="Наступний слайд">→</button>
+    </nav>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

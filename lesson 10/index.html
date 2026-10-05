@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hillel MAX — Урок 10 · Покращення і структурізація MCP сервера</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="deck" id="deck">
+      <section class="slide slide--active" data-slide="0" aria-label="Титульний слайд">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/main%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--title">
+          <img
+            class="slide__logo"
+            src="../video%20and%20pcitures/Hillel%20MAX%20Logo/logo-w.svg"
+            alt="Hillel MAX"
+            width="280"
+            height="39"
+          />
+          <p class="slide__eyebrow js-reveal">
+            <span class="slide__tech-chip">
+              <img src="../video%20and%20pcitures/icons/mcp-color.svg" alt="" width="20" height="20" />
+              IT · Model Context Protocol
+            </span>
+          </p>
+          <h1 class="slide__title js-reveal">Покращення і структурізація MCP сервера</h1>
+          <p class="slide__subtitle js-reveal">Від моноліту main.py до структурованого qauto server</p>
+          <div class="tech-chips js-reveal" aria-hidden="true">
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/python-color.svg" alt="" />Python</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/mcp-color.svg" alt="" />FastMCP</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/cursor-color.svg" alt="" />Cursor</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="План заняття">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--plan">
+          <p class="slide__eyebrow slide__eyebrow--accent js-reveal-plan-header">Урок 10</p>
+          <h2 class="slide__heading js-reveal-plan-header">План заняття</h2>
+          <ol class="plan-list">
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">01</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/python.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Архітектура MCP-сервера</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">02</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Каркас сервера</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">03</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/json.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Що бачить LLM насправді</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">04</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Висновки</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Блок 1: Архітектура -->
+      <section class="slide slide--block-intro" aria-label="Блок 1 — Архітектура MCP-сервера">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img class="slide__watermark" src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg" alt="" aria-hidden="true" />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 1</p>
+          <h2 class="slide__title js-reveal">Архітектура MCP-сервера</h2>
+          <p class="slide__subtitle js-reveal">Куди що класти і навіщо кожен шар</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Контекст архітектури">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Архітектура</p>
+          <h2 class="slide__heading js-reveal">З чого починаємо</h2>
+          <p class="slide__lead js-reveal">
+            Ми зібрали qauto MCP server в одному <code>main.py</code>: tools, prompts, resources, HTTP-клієнт, Pydantic і сесія.
+          </p>
+          <p class="slide__lead js-reveal">
+            Це нормальний прототип. Але коли сервер росте — один файл важко читати, тестувати і розширювати. Потрібна <strong>цільова архітектура</strong>.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Навіщо структурізація — проблеми">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Архітектура</p>
+          <h2 class="slide__heading js-reveal">Навіщо структурізація</h2>
+          <p class="slide__lead js-reveal">Поки все в <code>main.py</code>, легко змішати в одному файлі:</p>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal">Валідацію вхідних даних</li>
+            <li class="content-list__item js-reveal">HTTP-виклики до QAuto API</li>
+            <li class="content-list__item js-reveal">Логіку сесії (<code>sid</code>)</li>
+            <li class="content-list__item js-reveal">MCP-декоратори і формат відповідей</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Навіщо структурізація — переваги">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Архітектура</p>
+          <h2 class="slide__heading js-reveal">Що дає структура</h2>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal"><strong>Розділення відповідальностей</strong></li>
+            <li class="content-list__item js-reveal"><strong>Масштабування</strong></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Дерево проєкту 1">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--wide">
+          <p class="slide__eyebrow js-reveal">Архітектура</p>
+          <h2 class="slide__heading js-reveal">Цільове дерево проєкту</h2>
+          <p class="slide__lead js-reveal">Частина 1 — корінь і пакет</p>
+          <div class="proj-grid proj-grid--2 js-reveal">
+            <article class="proj-card">
+              <p class="proj-card__label">mcp-example/</p>
+              <ul class="proj-tree">
+                <li><span class="proj-tree__name">pyproject.toml</span></li>
+                <li><span class="proj-tree__name">README.md</span></li>
+                <li><span class="proj-tree__name">.env.example</span></li>
+                <li>
+                  <span class="proj-tree__name">data/</span>
+                  <span class="proj-tree__note">car_catalog.json</span>
+                </li>
+                <li>
+                  <span class="proj-tree__name">src/qauto_mcp/</span>
+                  <span class="proj-tree__note">основний пакет</span>
+                </li>
+              </ul>
+            </article>
+            <article class="proj-card">
+              <p class="proj-card__label">src/qauto_mcp/</p>
+              <ul class="proj-tree">
+                <li><span class="proj-tree__name">__init__.py</span></li>
+                <li>
+                  <span class="proj-tree__name">__main__.py</span>
+                  <span class="proj-tree__note">python -m qauto_mcp</span>
+                </li>
+                <li>
+                  <span class="proj-tree__name">server.py</span>
+                  <span class="proj-tree__note">FastMCP + реєстрація + lifespan</span>
+                </li>
+                <li>
+                  <span class="proj-tree__name">config.py</span>
+                  <span class="proj-tree__note">налаштування з env</span>
+                </li>
+                <li>
+                  <span class="proj-tree__name">formatting.py</span>
+                  <span class="proj-tree__note">єдиний формат відповідей tool</span>
+                </li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Дерево проєкту 2">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--wide">
+          <p class="slide__eyebrow js-reveal">Архітектура</p>
+          <h2 class="slide__heading js-reveal">Цільове дерево проєкту</h2>
+          <p class="slide__lead js-reveal">Частина 2 — models · services · MCP surface</p>
+          <div class="proj-grid proj-grid--tree js-reveal">
+            <article class="proj-card">
+              <p class="proj-card__label">models/</p>
+              <ul class="proj-tree">
+                <li>
+                  <span class="proj-tree__name">auth.py</span>
+                  <span class="proj-tree__note">SignUpRequest, SignInRequest</span>
+                </li>
+                <li>
+                  <span class="proj-tree__name">cars.py</span>
+                  <span class="proj-tree__note">AddCarRequest</span>
+                </li>
+              </ul>
+            </article>
+            <article class="proj-card">
+              <p class="proj-card__label">services/</p>
+              <ul class="proj-tree">
+                <li>
+                  <span class="proj-tree__name">http_client.py</span>
+                  <span class="proj-tree__note">створення / закриття httpx</span>
+                </li>
+                <li>
+                  <span class="proj-tree__name">session.py</span>
+                  <span class="proj-tree__note">sid, signin_as, ensure_session</span>
+                </li>
+                <li>
+                  <span class="proj-tree__name">catalog.py</span>
+                  <span class="proj-tree__note">довідник брендів</span>
+                </li>
+              </ul>
+            </article>
+            <article class="proj-card">
+              <p class="proj-card__label">tools/</p>
+              <ul class="proj-tree">
+                <li>
+                  <span class="proj-tree__name">auth.py</span>
+                  <span class="proj-tree__note">signup, signin</span>
+                </li>
+                <li>
+                  <span class="proj-tree__name">cars.py</span>
+                  <span class="proj-tree__note">add_car, get_cars</span>
+                </li>
+              </ul>
+            </article>
+            <article class="proj-card">
+              <p class="proj-card__label">resources/</p>
+              <ul class="proj-tree">
+                <li>
+                  <span class="proj-tree__name">cars.py</span>
+                  <span class="proj-tree__note">qauto://cars/catalog, brands/{id}</span>
+                </li>
+              </ul>
+            </article>
+            <article class="proj-card">
+              <p class="proj-card__label">prompts/</p>
+              <ul class="proj-tree">
+                <li>
+                  <span class="proj-tree__name">cars.py</span>
+                  <span class="proj-tree__note">analyze_cars</span>
+                </li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Блок 2: Каркас сервера -->
+      <section class="slide slide--block-intro" aria-label="Блок 2 — Каркас сервера">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img class="slide__watermark" src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg" alt="" aria-hidden="true" />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 2</p>
+          <h2 class="slide__title js-reveal">Каркас сервера</h2>
+          <p class="slide__subtitle js-reveal">FastMCP і опис tools для LLM</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Головна ідея каркаса">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Каркас</p>
+          <h2 class="slide__heading js-reveal">Головна ідея</h2>
+          <p class="slide__lead js-reveal">
+            Каркас — це те, що FastMCP знімає з коду при реєстрації: імʼя сервера, instructions, lifespan і метадані tools.
+          </p>
+          <p class="slide__lead js-reveal">
+            Далі розберемо <code>FastMCP(...)</code>, а потім окремо — що саме потрапляє в <code>tools/list</code> для LLM.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide slide--code" aria-label="FastMCP каркас">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--code">
+          <p class="slide__eyebrow js-reveal">Каркас</p>
+          <h2 class="slide__heading js-reveal">FastMCP з параметрами</h2>
+          <p class="slide__lead js-reveal">Для stdio достатньо <code>name</code> + <code>instructions</code> + <code>lifespan</code>.</p>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>mcp = FastMCP(
+    name="qauto",
+    instructions=(
+        "Before add_car, read qauto://cars/catalog. "
+        "For analysis use prompt analyze_cars."
+    ),
+    lifespan=app_lifespan,
+)</code></pre>
+          </div>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal"><strong>name</strong> — імʼя сервера в Host</li>
+            <li class="content-list__item js-reveal"><strong>instructions</strong> — гайд на рівні всього сервера</li>
+            <li class="content-list__item js-reveal"><strong>lifespan</strong> — startup/shutdown (HTTP-клієнт)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Популярні параметри FastMCP">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Каркас</p>
+          <h2 class="slide__heading js-reveal">Популярні параметри</h2>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal"><strong>name</strong> — імʼя сервера в Host</li>
+            <li class="content-list__item js-reveal"><strong>instructions</strong> — гайд на рівні всього сервера</li>
+            <li class="content-list__item js-reveal"><strong>lifespan</strong> — startup/shutdown (HTTP-клієнт)</li>
+            <li class="content-list__item js-reveal"><strong>log_level</strong> — діагностика (на stdio — обережно)</li>
+            <li class="content-list__item js-reveal"><strong>warn_on_duplicate_*</strong> — попередження про дублікати</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Блок 3: Що бачить LLM -->
+      <section class="slide slide--block-intro" aria-label="Блок 3 — Що бачить LLM насправді">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img class="slide__watermark" src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg" alt="" aria-hidden="true" />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 3</p>
+          <h2 class="slide__title js-reveal">Що бачить LLM насправді</h2>
+          <p class="slide__subtitle js-reveal">tools/list, декоратор і схеми</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Що бачить LLM насправді">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Що бачить LLM</p>
+          <h2 class="slide__heading js-reveal">Фасад tool</h2>
+          <p class="slide__lead js-reveal">
+            Модель <strong>не читає</strong> тіло функції, імпорти чи валідатори — лише те, що Host віддав у <code>tools/list</code>.
+          </p>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal"><strong>name</strong> / <strong>title</strong> / <strong>description</strong></li>
+            <li class="content-list__item js-reveal"><strong>inputSchema</strong> — JSON Schema аргументів</li>
+            <li class="content-list__item js-reveal"><strong>outputSchema</strong> — якщо є структурований return type</li>
+          </ul>
+          <p class="slide__lead js-reveal">
+            FastMCP збирає JSON при реєстрації: декоратор → type hints → return type → docstring (якщо немає <code>description=</code>).
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Docstring — базовий спосіб">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Що бачить LLM</p>
+          <h2 class="slide__heading js-reveal">Docstring — базовий спосіб</h2>
+          <p class="slide__lead js-reveal">
+            Якщо параметри — звичайні типи (<code>int</code>, <code>str</code>) без <code>Field</code>, усе пояснення кладіть у <strong>docstring</strong>.
+          </p>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal">Що робить tool і коли викликати</li>
+            <li class="content-list__item js-reveal"><strong>Args</strong> — сенс кожного поля</li>
+            <li class="content-list__item js-reveal"><strong>Returns</strong> — що очікувати у відповіді</li>
+          </ul>
+          <p class="slide__lead js-reveal">
+            Без Args/Returns модель бачить майже лише імена й типи — сенс полів губиться.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide slide--code" aria-label="Docstring — приклад коду">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--code">
+          <p class="slide__eyebrow js-reveal">Docstring</p>
+          <h2 class="slide__heading js-reveal">Лише docstring</h2>
+          <p class="slide__lead js-reveal">
+            Без параметрів у декораторі: імʼя = імʼя функції, увесь docstring іде в <code>tools/list</code> як <code>description</code>.
+          </p>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>@mcp.tool()
+async def add_car(
+    carBrandId: int,
+    carModelId: int,
+    mileage: int = 0,
+) -> str:
+    """Create a car for the current user (POST /cars).
+
+    Before calling, read qauto://cars/catalog for valid ids.
+    Do not use for listing cars — use get_cars.
+
+    Args:
+        carBrandId: Brand id from catalog (&gt;= 1).
+        carModelId: Model id for that brand (&gt;= 1).
+        mileage: Current mileage, 0..999999.
+
+    Returns:
+        JSON string with status_code and body (Car or error).
+    """
+    ...</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--code" aria-label="Docstring — tools/list">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--code">
+          <p class="slide__eyebrow js-reveal">Docstring · tools/list</p>
+          <h2 class="slide__heading js-reveal">Що піде в LLM</h2>
+          <p class="slide__lead js-reveal">
+            Весь docstring стає <code>description</code>. У <code>inputSchema</code> — лише типи, без описів полів.
+          </p>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>{
+  "name": "add_car",
+  "description": "Create a car for the current user (POST /cars).\n\nBefore calling, read qauto://cars/catalog...\n\nArgs:\n    carBrandId: Brand id...\n    ...",
+  "inputSchema": {
+    "properties": {
+      "carBrandId": { "type": "integer" },
+      "carModelId": { "type": "integer" },
+      "mileage": { "default": 0, "type": "integer" }
+    },
+    "required": ["carBrandId", "carModelId"]
+  }
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--code" aria-label="Розширений опис — приклад description">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--code">
+          <p class="slide__eyebrow js-reveal">Що бачить LLM</p>
+          <h2 class="slide__heading js-reveal">Розширений опис · description=</h2>
+          <p class="slide__lead js-reveal">
+            Явний <code>description</code> у декораторі <strong>замінює</strong> docstring у <code>tools/list</code>.
+          </p>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>@mcp.tool(
+    name="add_car",
+    title="Add car to garage",
+    description=(
+        "Add a single car to the current QAuto user garage "
+        "by brand id, model id, and mileage. "
+        "Before calling, read qauto://cars/catalog for valid ids."
+    ),
+)
+async def add_car(...):
+    ...</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Параметри @mcp.tool">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Що бачить LLM</p>
+          <h2 class="slide__heading js-reveal">Параметри @mcp.tool(...)</h2>
+          <p class="slide__lead js-reveal">Усі аргументи опційні. Без них FastMCP візьме імʼя функції і docstring.</p>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal"><strong>name</strong> — id tool у протоколі; без нього — імʼя функції</li>
+            <li class="content-list__item js-reveal"><strong>title</strong> — заголовок для UI Host</li>
+            <li class="content-list__item js-reveal"><strong>description</strong> — текст для LLM; замінює docstring</li>
+            <li class="content-list__item js-reveal"><strong>icons</strong> / <strong>meta</strong> — іконки й метадані для клієнта</li>
+            <li class="content-list__item js-reveal"><strong>structured_output</strong> — <code>None</code> / <code>True</code> / <code>False</code></li>
+            <li class="content-list__item js-reveal"><strong>annotations</strong> — підказки Host про поведінку tool</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="annotations ToolAnnotations">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Що бачить LLM · annotations</p>
+          <h2 class="slide__heading js-reveal">ToolAnnotations</h2>
+          <p class="slide__lead js-reveal">Підказки для Host (UX / ризик), не гарантія безпеки.</p>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal"><strong>readOnlyHint</strong> — лише читає, нічого не змінює</li>
+            <li class="content-list__item js-reveal"><strong>destructiveHint</strong> — зміни можуть бути руйнівними</li>
+            <li class="content-list__item js-reveal"><strong>idempotentHint</strong> — повтор з тими самими args без додаткового ефекту</li>
+            <li class="content-list__item js-reveal"><strong>openWorldHint</strong> — ходить у зовнішні системи (API тощо)</li>
+          </ul>
+          <p class="slide__lead js-reveal">Для qauto щодня: <code>name</code> + <code>title</code> + <code>description</code>. Annotations — коли Host має відрізняти read-only.</p>
+        </div>
+      </section>
+
+      <section class="slide slide--code" aria-label="Приклад без Pydantic — код">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--code">
+          <p class="slide__eyebrow js-reveal">Приклад 1 · без Pydantic</p>
+          <h2 class="slide__heading js-reveal">Plain types + description</h2>
+          <p class="slide__lead js-reveal">
+            Якщо є <code>description=</code> — docstring для LLM <strong>не використовується</strong>. У схемі лишаються лише типи полів.
+          </p>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>@mcp.tool(
+    name="add_car",
+    title="Add car to garage",
+    description=(
+        "Create a car (POST /cars). "
+        "Read qauto://cars/catalog first for valid ids."
+    ),
+)
+async def add_car(
+    carBrandId: int,
+    carModelId: int,
+    mileage: int = 0,
+) -> str:
+    ...</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--code" aria-label="Приклад без Pydantic — tools/list">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--code">
+          <p class="slide__eyebrow js-reveal">Приклад 1 · tools/list</p>
+          <h2 class="slide__heading js-reveal">Що піде в tools/list</h2>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>{
+  "name": "add_car",
+  "title": "Add car to garage",
+  "description": "Create a car (POST /cars). Read qauto://cars/catalog first for valid ids.",
+  "inputSchema": {
+    "properties": {
+      "carBrandId": { "type": "integer" },
+      "carModelId": { "type": "integer" },
+      "mileage": { "default": 0, "type": "integer" }
+    },
+    "required": ["carBrandId", "carModelId"]
+  }
+}</code></pre>
+          </div>
+          <p class="slide__lead js-reveal">
+            У <code>description</code> — лише текст з декоратора. У полях схеми <strong>немає</strong> описів — для цього потрібен <code>Field(description=...)</code>.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide slide--code" aria-label="Приклад з декоратором і Pydantic — код">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--code">
+          <p class="slide__eyebrow js-reveal">Приклад 2 · з Pydantic</p>
+          <h2 class="slide__heading js-reveal">Декоратор + моделі</h2>
+          <p class="slide__lead js-reveal">
+            Input і return type — Pydantic: у <code>tools/list</code> зʼявляться і <code>inputSchema</code>, і <code>outputSchema</code>.
+          </p>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>class AddCarInput(BaseModel):
+    carBrandId: int = Field(ge=1, description="Brand id from catalog (&gt;= 1).")
+    carModelId: int = Field(ge=1, description="Model id for that brand (&gt;= 1).")
+    mileage: int = Field(default=0, ge=0, le=999_999, description="Current mileage.")
+
+class AddCarResult(BaseModel):
+    status: Literal["added", "already_exists", "error"] = Field(
+        description="Result of the operation"
+    )
+    car_id: str | None = Field(default=None, description="ID if status is added")
+    message: str = Field(description="Human-readable explanation")
+
+@mcp.tool(
+    name="add_car",
+    title="Add car to garage",
+    description=(
+        "Add a single car to the current QAuto user garage "
+        "by brand id, model id, and mileage."
+    ),
+)
+async def add_car(car: AddCarInput) -> AddCarResult:
+    ...</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--code" aria-label="Приклад з декоратором і Pydantic — tools/list">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--code">
+          <p class="slide__eyebrow js-reveal">Приклад 2 · tools/list</p>
+          <h2 class="slide__heading js-reveal">Що піде в tools/list</h2>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>{
+  "name": "add_car",
+  "title": "Add car to garage",
+  "description": "Add a single car to the current QAuto user garage ...",
+  "inputSchema": {
+    "properties": { "car": { "$ref": "#/$defs/AddCarInput" } },
+    "required": ["car"]
+  },
+  "outputSchema": {
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": ["added", "already_exists", "error"],
+        "description": "Result of the operation"
+      },
+      "car_id": {
+        "anyOf": [{ "type": "string" }, { "type": "null" }],
+        "description": "ID if status is added"
+      },
+      "message": {
+        "type": "string",
+        "description": "Human-readable explanation"
+      }
+    },
+    "required": ["status", "message"]
+  }
+}</code></pre>
+          </div>
+          <p class="slide__lead js-reveal">
+            Return type → <code>outputSchema</code>: <code>enum</code>, nullable <code>car_id</code>, описи полів. Модель може планувати наступний крок ще до виклику.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Коротке правило">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Що бачить LLM</p>
+          <h2 class="slide__heading js-reveal">Коротке правило</h2>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal">LLM бачить JSON-схему, не тіло функції</li>
+            <li class="content-list__item js-reveal">Базовий рівень — <strong>docstring</strong> з Args/Returns + <code>name</code> / <code>title</code></li>
+            <li class="content-list__item js-reveal">Розширення — явний <code>description</code> у декораторі</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Resources і prompts">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Що бачить LLM</p>
+          <h2 class="slide__heading js-reveal">Той самий стиль</h2>
+          <p class="slide__lead js-reveal">
+            Для <strong>resources</strong> і <strong>prompts</strong> — ті самі принципи: <code>name</code>, <code>title</code>, <code>description</code>.
+          </p>
+          <p class="slide__lead js-reveal">
+            Tools description читає переважно LLM. Resources/prompts — частіше людина в списку Host. Пишіть зрозуміло для обох.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Підсумки">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Фінал заняття</p>
+          <h2 class="slide__heading js-reveal">Підсумки</h2>
+          <p class="slide__lead js-reveal">
+            На цій лекції ми розібрали <strong>цільову архітектуру</strong> qauto MCP server, <strong>каркас FastMCP</strong> і те, <strong>що бачить LLM</strong> у <code>tools/list</code>.
+          </p>
+          <p class="slide__lead js-reveal">
+            Головне для tools: docstring без декоратора vs явний <code>description</code>; plain types vs Pydantic з <code>Field</code>; annotations як підказки Host.
+          </p>
+          <p class="slide__lead js-reveal">
+            Далі — практичний перенос коду в структурований пакет і подальші покращення сервера.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <nav class="nav" aria-label="Навігація по слайдах">
+      <button type="button" class="nav__btn" id="prev" aria-label="Попередній слайд">←</button>
+      <span class="nav__progress" id="navProgress" aria-live="polite">1 / 27</span>
+      <div class="nav__dots" id="dots" role="tablist" aria-label="Слайди"></div>
+      <button type="button" class="nav__btn" id="next" aria-label="Наступний слайд">→</button>
+    </nav>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

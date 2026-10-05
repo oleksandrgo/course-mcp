@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hillel MAX — Урок 4 · Transport layer — stdio і Streamable HTTP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="deck" id="deck">
+      <section class="slide slide--active" data-slide="0" aria-label="Титульний слайд">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/main%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--title">
+          <img
+            class="slide__logo"
+            src="../video%20and%20pcitures/Hillel%20MAX%20Logo/logo-w.svg"
+            alt="Hillel MAX"
+            width="280"
+            height="39"
+          />
+          <p class="slide__eyebrow js-reveal">
+            <span class="slide__tech-chip">
+              <img src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" width="20" height="20" />
+              IT · Model Context Protocol
+            </span>
+          </p>
+          <h1 class="slide__title js-reveal">Transport layer — stdio і Streamable HTTP</h1>
+          <p class="slide__subtitle js-reveal">Як MCP доставляє JSON-RPC між Client і Server</p>
+          <div class="tech-chips js-reveal" aria-hidden="true">
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" />stdio</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/w/docker.svg" alt="" />HTTP</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/w/python.svg" alt="" />FastMCP</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/w/chatgpt.svg" alt="" />Client</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" data-slide="1" aria-label="План заняття">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--plan">
+          <p class="slide__eyebrow slide__eyebrow--accent js-reveal-plan-header">Урок 4</p>
+          <h2 class="slide__heading js-reveal-plan-header">План заняття</h2>
+          <ol class="plan-list">
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">01</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" width="32" height="32" />
+              <span class="plan-list__text">Вступ: Transport layer і JSON-RPC</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">02</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/python.svg" alt="" width="32" height="32" />
+              <span class="plan-list__text">Локальний MCP Server (stdio)</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">03</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/docker.svg" alt="" width="32" height="32" />
+              <span class="plan-list__text">Віддалений Server (Streamable HTTP)</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">04</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/git.svg" alt="" width="32" height="32" />
+              <span class="plan-list__text">Аутентифікація для Remote MCP</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">05</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/jira.svg" alt="" width="32" height="32" />
+              <span class="plan-list__text">Порівняння stdio vs Streamable HTTP</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">06</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg" alt="" width="32" height="32" />
+              <span class="plan-list__text">Deprecated: HTTP+SSE</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">07</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" width="32" height="32" />
+              <span class="plan-list__text">Три transport в одному коді</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Block 1 -->
+      <section class="slide slide--block-intro" aria-label="Блок 1 — Вступ">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 1</p>
+          <h2 class="slide__title js-reveal">Вступ: Transport layer</h2>
+          <p class="slide__subtitle js-reveal">JSON-RPC, client-server і канал доставки</p>
+        </div>
+      </section>
+
+      <section class="slide slide--diagram diagram-slide" aria-label="Client-Server Architecture">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--diagram slide__inner--seq-diagram">
+          <p class="slide__eyebrow js-reveal">Вступ</p>
+          <h2 class="slide__heading js-reveal">Client-Server Architecture</h2>
+          <div
+            class="mcp-seq-flow mcp-seq-flow--three-col js-reveal"
+            role="img"
+            aria-label="User, MCP Client/Host, MCP Server — чотири кроки з JSON-RPC"
+          >
+            <div class="mcp-seq-flow__canvas">
+              <div class="mcp-seq-flow__participants mcp-seq-flow__step">
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--user">
+                  <span class="mcp-seq-flow__participant-name">User</span>
+                </div>
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--client">
+                  <span class="mcp-seq-flow__participant-name">MCP Client/Host</span>
+                </div>
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--server">
+                  <span class="mcp-seq-flow__participant-name">MCP Server</span>
+                </div>
+              </div>
+
+              <div class="mcp-seq-flow__lifelines mcp-seq-flow__step" aria-hidden="true">
+                <span></span><span></span><span></span>
+              </div>
+
+              <div class="mcp-seq-flow__stage">
+                <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                  <div class="mcp-seq-flow__track mcp-seq-flow__track--c1-2">
+                    <span class="mcp-seq-flow__label">1. «Яка погода в Парижі?»</span>
+                    <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span>
+                  </div>
+                </div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                  <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3">
+                    <span class="mcp-seq-flow__label">2. JSON-RPC Request (method: get_weather, params: {city: "Paris"}, id: 1)</span>
+                    <span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span>
+                  </div>
+                </div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                  <div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3 mcp-seq-flow__track--reverse">
+                    <span class="mcp-seq-flow__label">3. JSON-RPC Response (result: 20, id: 1)</span>
+                    <span class="mcp-seq-flow__line mcp-seq-flow__line--dashed"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span>
+                  </div>
+                </div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step">
+                  <div class="mcp-seq-flow__track mcp-seq-flow__track--c1-2 mcp-seq-flow__track--reverse">
+                    <span class="mcp-seq-flow__label">4. «Температура в Парижі — 20°C.»</span>
+                    <span class="mcp-seq-flow__line mcp-seq-flow__line--dashed"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mcp-seq-flow__participants mcp-seq-flow__participants--bottom">
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--user">
+                  <span class="mcp-seq-flow__participant-name">User</span>
+                </div>
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--client">
+                  <span class="mcp-seq-flow__participant-name">MCP Client/Host</span>
+                </div>
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--server">
+                  <span class="mcp-seq-flow__participant-name">MCP Server</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Структура JSON-RPC — Request">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Вступ</p>
+          <h2 class="slide__heading js-reveal">Структура JSON-RPC</h2>
+          <p class="slide__lead js-reveal">
+            <strong>Request</strong> (client → server): який tool обрано і з якими аргументами.
+          </p>
+          <div class="token-card js-reveal">
+            <pre class="slide__code"><code>{
+  "jsonrpc": "2.0",
+  "method": "get_weather",
+  "params": { "city": "Paris" },
+  "id": 1
+}</code></pre>
+          </div>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal"><strong>method</strong> — що викликати</li>
+            <li class="content-list__item js-reveal"><strong>params</strong> — аргументи tool</li>
+            <li class="content-list__item js-reveal"><strong>id</strong> — зіставлення відповіді</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Структура JSON-RPC — Response">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Вступ</p>
+          <h2 class="slide__heading js-reveal">JSON-RPC Response</h2>
+          <div class="token-card js-reveal">
+            <pre class="slide__code"><code>{
+  "jsonrpc": "2.0",
+  "result": 20,
+  "id": 1
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Що таке Transport layer">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Вступ</p>
+          <h2 class="slide__heading js-reveal">Що таке Transport layer</h2>
+          <p class="slide__lead js-reveal">
+            <strong>Transport layer</strong> — рівень MCP, який відповідає за <strong>фізичну доставку</strong> JSON-RPC
+            повідомлень між Client і Server. Протокол визначає <em>що</em> передається; transport — <em>як</em> воно
+            доходить від однієї програми до іншої: через який канал, на якій машині, за яким механізмом.
+          </p>
+          <p class="slide__lead js-reveal">
+            Аналогія: JSON-RPC — текст листа, transport — спосіб доставки. Той самий лист можна передати кур'єром
+            по кімнаті або поштою через інтернет.
+          </p>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal"><strong>stdio</strong> — локально на одному ПК через stdin/stdout</li>
+            <li class="content-list__item js-reveal"><strong>Streamable HTTP</strong> — по мережі через HTTP (POST + GET)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Block 2: stdio -->
+      <section class="slide slide--block-intro" aria-label="Блок 2 — stdio">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 2</p>
+          <h2 class="slide__title js-reveal">Локальний MCP Server</h2>
+          <p class="slide__subtitle js-reveal">stdio transport</p>
+        </div>
+      </section>
+
+      <section class="slide slide--diagram diagram-slide" aria-label="Схема stdio">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--diagram">
+          <p class="slide__eyebrow js-reveal">Локальний stdio</p>
+          <h2 class="slide__heading js-reveal">Як це працює</h2>
+          <div
+            class="mcp-flow mcp-flow--four-col mcp-flow--equal-nodes js-reveal"
+            role="img"
+            aria-label="User, Host і local MCP server всередині LOCAL MACHINE через stdio"
+          >
+            <div class="mcp-flow__lane">
+              <div class="mcp-flow__agents mcp-flow__step">
+                <div class="mcp-flow__node mcp-flow__node--agent">
+                  <span class="mcp-flow__badge">User</span>
+                  <span class="mcp-flow__label">Користувач</span>
+                  <span class="mcp-flow__hint">природна мова</span>
+                </div>
+                <p class="mcp-flow__note">Запит у Host (Cursor, Claude Desktop)</p>
+              </div>
+
+              <div class="mcp-flow__client-group mcp-flow__step">
+                <div class="mcp-flow__pipe mcp-flow__pipe--left" aria-hidden="true">
+                  <span class="mcp-flow__line"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--a"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--b"></span>
+                </div>
+                <div class="mcp-flow__node mcp-flow__node--client">
+                  <img
+                    class="mcp-flow__hub-icon"
+                    src="../video%20and%20pcitures/icons/w/chatgpt.svg"
+                    alt=""
+                    width="32"
+                    height="32"
+                  />
+                  <span class="mcp-flow__label">Host / Client</span>
+                  <span class="mcp-flow__hint">LOCAL MACHINE</span>
+                </div>
+              </div>
+
+              <div class="mcp-flow__hub-group mcp-flow__step">
+                <div class="mcp-flow__pipe mcp-flow__pipe--left" aria-hidden="true">
+                  <span class="mcp-flow__line"></span>
+                  <span class="mcp-flow__transport-label">stdio</span>
+                  <span class="mcp-flow__dot mcp-flow__dot--a"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--b"></span>
+                </div>
+                <div class="mcp-flow__hub">
+                  <span class="mcp-flow__hub-ring" aria-hidden="true"></span>
+                  <img
+                    class="mcp-flow__hub-icon"
+                    src="../video%20and%20pcitures/icons/w/python.svg"
+                    alt=""
+                    width="32"
+                    height="32"
+                  />
+                  <span class="mcp-flow__hub-title">local MCP server</span>
+                  <span class="mcp-flow__hub-sub">subprocess · stdin/stdout</span>
+                </div>
+              </div>
+
+              <div class="mcp-flow__services-group mcp-flow__step">
+                <div class="mcp-flow__pipe mcp-flow__pipe--left" aria-hidden="true">
+                  <span class="mcp-flow__line"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--a"></span>
+                </div>
+                <div class="mcp-flow__services-wrap">
+                  <p class="mcp-flow__services-title">JSON-RPC</p>
+                  <div class="mcp-flow__services">
+                    <div class="mcp-flow__node mcp-flow__node--service">
+                      <span class="mcp-flow__service-icon">→</span>
+                      <span class="mcp-flow__label">Request</span>
+                    </div>
+                    <div class="mcp-flow__node mcp-flow__node--service">
+                      <span class="mcp-flow__service-icon">←</span>
+                      <span class="mcp-flow__label">Response</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="mcp-flow__caption mcp-flow__step">
+              Client <strong>запускає сервер як subprocess</strong> — JSON-RPC через <strong>stdio</strong>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Що таке stdio">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Локальний stdio</p>
+          <h2 class="slide__heading js-reveal">Що таке stdio</h2>
+          <p class="slide__lead js-reveal">
+            <strong>stdio</strong> = <em>standard input / standard output</em>. Це <strong>не мережевий протокол</strong> —
+            стандартні потоки ОС у кожного процесу: <strong>stdin</strong> (вхід), <strong>stdout</strong> (вихід),
+            <strong>stderr</strong> (логи).
+          </p>
+          <p class="slide__lead js-reveal">
+            Це <strong>байтові труби</strong> в пам'яті між двома програмами на одному ПК — без TCP, без IP, без HTTP.
+            Усередині просто текст JSON, по одному повідомленню на рядок.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Конфігурація command args">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Локальний stdio</p>
+          <h2 class="slide__heading js-reveal">command і args</h2>
+          <p class="slide__lead js-reveal">Host сам стартує процес сервера при підключенні:</p>
+          <div class="token-card js-reveal">
+            <pre class="slide__code"><code>{
+  "mcpServers": {
+    "my-server": {
+      "command": "python",
+      "args": ["path/to/server.py"],
+      "env": { "API_KEY": "your_key" }
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--diagram" aria-label="Один Client — один subprocess">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--diagram">
+          <p class="slide__eyebrow js-reveal">Локальний stdio</p>
+          <h2 class="slide__heading js-reveal">Один Client — один subprocess</h2>
+          <p class="slide__lead js-reveal">
+            Host <strong>запускає програму</strong> як дочірній процес — наче <code>node server.js</code> у терміналі.
+          </p>
+
+          <div class="subprocess-tree js-reveal" role="img" aria-label="Host spawn три окремі процеси серверів">
+            <div class="subprocess-tree__host">
+              <span class="subprocess-tree__host-name">Claude Desktop</span>
+              <span class="subprocess-tree__host-hint">Host</span>
+            </div>
+            <ul class="subprocess-tree__spawns">
+              <li class="subprocess-tree__spawn">
+                <code>spawn("node filesystem-server.js")</code>
+                <span class="subprocess-tree__arrow" aria-hidden="true">→</span>
+                <span class="subprocess-tree__proc">Process #1</span>
+              </li>
+              <li class="subprocess-tree__spawn">
+                <code>spawn("python git-server.py")</code>
+                <span class="subprocess-tree__arrow" aria-hidden="true">→</span>
+                <span class="subprocess-tree__proc">Process #2</span>
+              </li>
+              <li class="subprocess-tree__spawn">
+                <code>spawn("node database-server.js")</code>
+                <span class="subprocess-tree__arrow" aria-hidden="true">→</span>
+                <span class="subprocess-tree__proc">Process #3</span>
+              </li>
+            </ul>
+            <p class="subprocess-tree__note">Кожен сервер у конфігу — окремий процес у Task Manager / Activity Monitor</p>
+          </div>
+
+          <p class="slide__section-label js-reveal">Приклади</p>
+          <ul class="content-list content-list--compact content-list--examples">
+            <li class="content-list__item js-reveal">
+              <strong>1 Host, 5 серверів у конфігу</strong>
+              <span class="content-list__item-sub">→ 5 окремих subprocess</span>
+            </li>
+            <li class="content-list__item js-reveal">
+              <strong>Cursor і Claude Desktop</strong>
+              <span class="content-list__item-sub">→ 2 subprocess, той самий <code>server.js</code></span>
+              <span class="content-list__item-sub">Своя пам'ять і stdin/stdout — стан не спільний</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide slide--diagram" aria-label="Чому stdio не масштабується">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--diagram">
+          <p class="slide__eyebrow js-reveal">Локальний stdio</p>
+          <h2 class="slide__heading js-reveal">Чому stdio не масштабується</h2>
+          <p class="slide__lead js-reveal">
+            Один спільний сервер на всю команду через stdio — <strong>не працює</strong>.
+          </p>
+
+          <div class="subprocess-split js-reveal" role="img" aria-label="Cursor і Claude Desktop запускають два окремі процеси одного сервера">
+            <div class="subprocess-split__row">
+              <span class="subprocess-split__host">Cursor</span>
+              <code>spawn("node server.js")</code>
+              <span class="subprocess-split__arrow" aria-hidden="true">→</span>
+              <span class="subprocess-split__proc">Process #1</span>
+            </div>
+            <div class="subprocess-split__row">
+              <span class="subprocess-split__host">Claude Desktop</span>
+              <code>spawn("node server.js")</code>
+              <span class="subprocess-split__arrow" aria-hidden="true">→</span>
+              <span class="subprocess-split__proc">Process #2</span>
+            </div>
+            <p class="subprocess-split__note">Два запуски одного файлу — процеси не знають один про одного</p>
+          </div>
+
+          <div class="grid-2 grid-2--equal js-reveal">
+            <div class="content-card content-card--ok">
+              <p class="content-card__title">Streamable HTTP</p>
+              <p class="content-card__text">1 сервер слухає порт</p>
+              <p class="content-card__text">100 клієнтів підключаються → <strong>працює</strong></p>
+            </div>
+            <div class="content-card content-card--warn">
+              <p class="content-card__title">stdio</p>
+              <p class="content-card__text">100 клієнтів → 100 процесів</p>
+              <p class="content-card__text">кожен <strong>spawn()</strong> → <strong>неефективно</strong></p>
+            </div>
+          </div>
+
+          <p class="slide__section-label slide__section-label--warn js-reveal">Обмеження</p>
+          <ul class="content-list content-list--compact content-list--full">
+            <li class="content-list__item content-list__item--warning js-reveal">
+              <strong>stdio</strong> — лише для desktop і локальної роботи
+              <span class="content-list__item-sub">Для спільного командного сервера — <strong>Streamable HTTP</strong></span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Код stdio">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Локальний stdio</p>
+          <h2 class="slide__heading js-reveal">Мінімальний код (stdio)</h2>
+          <div class="token-card js-reveal">
+            <pre class="slide__code"><code>from fastmcp import FastMCP
+
+mcp = FastMCP("Cool MCP Server")
+
+if __name__ == "__main__":
+    mcp.run()  # transport="stdio"</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Block 3: Streamable HTTP -->
+      <section class="slide slide--block-intro" aria-label="Блок 3 — Streamable HTTP">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 3</p>
+          <h2 class="slide__title js-reveal">Віддалений MCP Server</h2>
+          <p class="slide__subtitle js-reveal">Streamable HTTP</p>
+        </div>
+      </section>
+
+      <section class="slide slide--diagram diagram-slide" aria-label="Схема Streamable HTTP">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--diagram">
+          <p class="slide__eyebrow js-reveal">Streamable HTTP</p>
+          <h2 class="slide__heading js-reveal">Як це працює</h2>
+          <div
+            class="mcp-flow mcp-flow--four-col mcp-flow--equal-nodes js-reveal"
+            role="img"
+            aria-label="User і Host у LOCAL MACHINE, remote MCP server у Cloud через Streamable HTTP"
+          >
+            <div class="mcp-flow__lane">
+              <div class="mcp-flow__agents mcp-flow__step">
+                <div class="mcp-flow__node mcp-flow__node--agent">
+                  <span class="mcp-flow__badge">User</span>
+                  <span class="mcp-flow__label">Користувач</span>
+                  <span class="mcp-flow__hint">природна мова</span>
+                </div>
+                <p class="mcp-flow__note">User ↔ Host — всередині LOCAL MACHINE</p>
+              </div>
+
+              <div class="mcp-flow__client-group mcp-flow__step">
+                <div class="mcp-flow__pipe mcp-flow__pipe--left" aria-hidden="true">
+                  <span class="mcp-flow__line"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--a"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--b"></span>
+                </div>
+                <div class="mcp-flow__node mcp-flow__node--client">
+                  <img
+                    class="mcp-flow__hub-icon"
+                    src="../video%20and%20pcitures/icons/w/chatgpt.svg"
+                    alt=""
+                    width="32"
+                    height="32"
+                  />
+                  <span class="mcp-flow__label">Host / Client</span>
+                  <span class="mcp-flow__hint">LOCAL MACHINE</span>
+                </div>
+              </div>
+
+              <div class="mcp-flow__hub-group mcp-flow__step">
+                <div class="mcp-flow__pipe mcp-flow__pipe--left" aria-hidden="true">
+                  <span class="mcp-flow__line"></span>
+                  <span class="mcp-flow__transport-label">Streamable HTTP</span>
+                  <span class="mcp-flow__dot mcp-flow__dot--a"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--b"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--c"></span>
+                </div>
+                <div class="mcp-flow__hub">
+                  <span class="mcp-flow__hub-ring" aria-hidden="true"></span>
+                  <span class="mcp-flow__hub-tag">Cloud</span>
+                  <img
+                    class="mcp-flow__hub-icon"
+                    src="../video%20and%20pcitures/icons/w/docker.svg"
+                    alt=""
+                    width="32"
+                    height="32"
+                  />
+                  <span class="mcp-flow__hub-title">remote MCP server</span>
+                  <span class="mcp-flow__hub-sub">один процес · AWS / GCP</span>
+                </div>
+              </div>
+
+              <div class="mcp-flow__services-group mcp-flow__step">
+                <div class="mcp-flow__pipe mcp-flow__pipe--left" aria-hidden="true">
+                  <span class="mcp-flow__line"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--a"></span>
+                </div>
+                <div class="mcp-flow__services-wrap">
+                  <p class="mcp-flow__services-title">Масштабування</p>
+                  <div class="mcp-flow__services">
+                    <div class="mcp-flow__node mcp-flow__node--service">
+                      <span class="mcp-flow__service-icon">×N</span>
+                      <span class="mcp-flow__label">Клієнти</span>
+                    </div>
+                    <div class="mcp-flow__node mcp-flow__node--service">
+                      <span class="mcp-flow__service-icon">1</span>
+                      <span class="mcp-flow__label">Сервер</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="mcp-flow__caption mcp-flow__step">
+              Host (Client) ↔ remote server у <strong>Cloud</strong> — один процес обслуговує <strong>тисячі клієнтів</strong> по HTTP, без subprocess
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="HTTP локально">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Streamable HTTP</p>
+          <h2 class="slide__heading js-reveal">HTTP transport локально</h2>
+          <p class="slide__lead js-reveal">
+            Той самий transport на <code>http://127.0.0.1:8000/mcp</code> — сервер запускається окремо, Client підключається по <strong>url</strong>.
+          </p>
+          <p class="slide__lead js-reveal">
+            Зручно для <strong>MCP Inspector</strong> і коли один процес обслуговує кілька клієнтів на localhost.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Конфігурація url">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Streamable HTTP</p>
+          <h2 class="slide__heading js-reveal">Конфігурація: url</h2>
+          <div class="token-card js-reveal">
+            <pre class="slide__code"><code>{
+  "mcpServers": {
+    "remote-server": {
+      "url": "https://mcp.example.com/mcp"
+    },
+    "local-http": {
+      "url": "http://127.0.0.1:8000/mcp"
+    }
+  }
+}</code></pre>
+          </div>
+          <p class="slide__lead js-reveal">Client <strong>не запускає</strong> subprocess — з'єднується з уже працюючим HTTP-сервером.</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Код Streamable HTTP">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Streamable HTTP</p>
+          <h2 class="slide__heading js-reveal">Мінімальний код (HTTP)</h2>
+          <div class="token-card js-reveal">
+            <pre class="slide__code"><code>if __name__ == "__main__":
+    mcp.run(
+        transport="streamable-http",
+        host="127.0.0.1",
+        port=8000
+    )</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Block 4: Auth -->
+      <section class="slide slide--block-intro" aria-label="Блок 4 — Аутентифікація">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 4</p>
+          <h2 class="slide__title js-reveal">Аутентифікація</h2>
+          <p class="slide__subtitle js-reveal">Remote MCP + OAuth</p>
+        </div>
+      </section>
+
+      <section class="slide slide--diagram diagram-slide" aria-label="Схема auth">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--diagram">
+          <p class="slide__eyebrow js-reveal">Аутентифікація</p>
+          <h2 class="slide__heading js-reveal">Як це працює</h2>
+          <div
+            class="mcp-flow mcp-flow--auth js-reveal"
+            role="img"
+            aria-label="User, Claude Desktop, Remote MCP з Auth0, App API"
+          >
+            <div class="mcp-auth-flow">
+              <div class="mcp-auth-flow__track">
+                <div class="mcp-auth-flow__block mcp-auth-flow__block--user mcp-flow__step">
+                  <span class="mcp-flow__badge">User</span>
+                  <span class="mcp-flow__label">User</span>
+                </div>
+
+                <div class="mcp-auth-flow__arrow mcp-flow__step" aria-hidden="true">
+                  <span class="mcp-auth-flow__arrow-line">↔</span>
+                </div>
+
+                <div class="mcp-auth-flow__block mcp-flow__step">
+                  <img
+                    class="mcp-auth-flow__icon"
+                    src="../video%20and%20pcitures/icons/claude-color.png"
+                    alt=""
+                    width="44"
+                    height="44"
+                  />
+                  <span class="mcp-flow__label">Claude Desktop</span>
+                </div>
+
+                <div class="mcp-auth-flow__arrow mcp-auth-flow__arrow--labeled mcp-flow__step" aria-hidden="true">
+                  <span class="mcp-auth-flow__transport">HTTP + Bearer</span>
+                  <span class="mcp-auth-flow__arrow-line">→</span>
+                </div>
+
+                <div class="mcp-auth-flow__block mcp-auth-flow__block--server mcp-flow__step">
+                  <span class="mcp-flow__label">Remote MCP</span>
+                </div>
+
+                <div class="mcp-auth-flow__arrow mcp-auth-flow__arrow--vertical mcp-flow__step" aria-hidden="true">
+                  <span class="mcp-auth-flow__arrow-line">↕</span>
+                </div>
+
+                <div class="mcp-auth-flow__auth mcp-flow__step">
+                  <span class="mcp-auth-flow__auth-eyebrow">Authentication</span>
+                  <span class="mcp-auth-flow__auth-label">Auth0</span>
+                </div>
+
+                <div class="mcp-auth-flow__arrow mcp-flow__step" aria-hidden="true">
+                  <span class="mcp-auth-flow__arrow-line">↔</span>
+                </div>
+
+                <div class="mcp-auth-flow__block mcp-auth-flow__block--server mcp-flow__step">
+                  <span class="mcp-flow__label">App API</span>
+                </div>
+              </div>
+            </div>
+            <p class="mcp-flow__caption mcp-flow__step">
+              Claude Desktop з'єднується з <strong>Remote MCP</strong> по HTTP з токеном <strong>Authorization: Bearer</strong>, <strong>Auth0</strong> — OAuth
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Auth config">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Аутентифікація</p>
+          <h2 class="slide__heading js-reveal">Приклад з Bearer token</h2>
+          <div class="token-card js-reveal">
+            <pre class="slide__code"><code>{
+  "mcpServers": {
+    "todos": {
+      "url": "https://mcp.example.com/mcp",
+      "headers": {
+        "Authorization": "Bearer &lt;access_token&gt;"
+      }
+    }
+  }
+}</code></pre>
+          </div>
+          <p class="slide__lead js-reveal">Remote без auth — лише для dev на localhost. У production auth обов'язковий.</p>
+        </div>
+      </section>
+
+      <!-- Block 5: Comparison -->
+      <section class="slide slide--block-intro" aria-label="Блок 5 — Порівняння">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 5</p>
+          <h2 class="slide__title js-reveal">Порівняння</h2>
+          <p class="slide__subtitle js-reveal">stdio vs Streamable HTTP</p>
+        </div>
+      </section>
+
+      <section class="slide slide--compare" aria-label="Переваги stdio">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--compare">
+          <p class="slide__eyebrow js-reveal">Порівняння</p>
+          <h2 class="slide__heading js-reveal">stdio</h2>
+          <div class="compare-table-wrap js-reveal">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th scope="col" class="compare-table__th compare-table__th--mark"></th>
+                  <th scope="col" class="compare-table__th">Характеристика</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="content-list__item compare-table__row compare-table__row--pro">
+                  <td class="compare-table__mark">✓</td>
+                  <td>Простота — без мережі, портів, TLS</td>
+                </tr>
+                <tr class="content-list__item compare-table__row compare-table__row--pro">
+                  <td class="compare-table__mark">✓</td>
+                  <td>Ідеально для desktop Host</td>
+                </tr>
+                <tr class="content-list__item compare-table__row compare-table__row--pro">
+                  <td class="compare-table__mark">✓</td>
+                  <td>Client керує життєвим циклом процесу</td>
+                </tr>
+                <tr class="content-list__item compare-table__row compare-table__row--con">
+                  <td class="compare-table__mark">✗</td>
+                  <td>Один subprocess на одне з'єднання</td>
+                </tr>
+                <tr class="content-list__item compare-table__row compare-table__row--con">
+                  <td class="compare-table__mark">✗</td>
+                  <td>Не підходить для спільного командного сервера</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--compare" aria-label="Переваги HTTP">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--compare">
+          <p class="slide__eyebrow js-reveal">Порівняння</p>
+          <h2 class="slide__heading js-reveal">Streamable HTTP</h2>
+          <div class="compare-table-wrap js-reveal">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th scope="col" class="compare-table__th compare-table__th--mark"></th>
+                  <th scope="col" class="compare-table__th">Характеристика</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="content-list__item compare-table__row compare-table__row--pro">
+                  <td class="compare-table__mark">✓</td>
+                  <td>Один процес — багато клієнтів</td>
+                </tr>
+                <tr class="content-list__item compare-table__row compare-table__row--pro">
+                  <td class="compare-table__mark">✓</td>
+                  <td>Деплой у хмару, Docker, Kubernetes</td>
+                </tr>
+                <tr class="content-list__item compare-table__row compare-table__row--pro">
+                  <td class="compare-table__mark">✓</td>
+                  <td>Сесії через <code>Mcp-Session-Id</code></td>
+                </tr>
+                <tr class="content-list__item compare-table__row compare-table__row--con">
+                  <td class="compare-table__mark">✗</td>
+                  <td>Складніша інфраструктура</td>
+                </tr>
+                <tr class="content-list__item compare-table__row compare-table__row--con">
+                  <td class="compare-table__mark">✗</td>
+                  <td>Auth обов'язковий у production</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Коли що обирати">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Порівняння</p>
+          <h2 class="slide__heading js-reveal">Коли що обирати</h2>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal">Локальна розробка, desktop-агент → <strong>stdio</strong></li>
+            <li class="content-list__item js-reveal">Спільний сервер для команди → <strong>Streamable HTTP</strong></li>
+            <li class="content-list__item js-reveal">Хмарний MCP з OAuth → <strong>HTTP + auth</strong></li>
+            <li class="content-list__item js-reveal">MCP Inspector на localhost → <strong>HTTP на 127.0.0.1</strong></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Block 6: Deprecated -->
+      <section class="slide slide--block-intro" aria-label="Блок 6 — Deprecated SSE">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 6</p>
+          <h2 class="slide__title js-reveal">Deprecated HTTP+SSE</h2>
+          <p class="slide__subtitle js-reveal">HTTP → SSE → Streamable HTTP</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Повна картина HTTP SSE Streamable HTTP">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Deprecated</p>
+          <h2 class="slide__heading js-reveal">Повна картина</h2>
+          <p class="slide__lead js-reveal">
+            Чому в MCP з'явився <strong>Streamable HTTP</strong> і чому <strong>HTTP+SSE</strong> — legacy.
+          </p>
+          <ul class="content-list content-list--compact">
+            <li class="content-list__item js-reveal"><strong>Крок 1</strong> — звичайний HTTP/1.1</li>
+            <li class="content-list__item js-reveal"><strong>Крок 2</strong> — SSE: відкрите з'єднання і два endpoint в MCP</li>
+            <li class="content-list__item js-reveal"><strong>Крок 3</strong> — Streamable HTTP: один endpoint і chunked-відповідь</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide slide--http-story" aria-label="Крок 1 — Звичайний HTTP">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--http-flow">
+          <p class="slide__eyebrow js-reveal">Крок 1</p>
+          <h2 class="slide__heading js-reveal">Звичайний HTTP/1.1</h2>
+          <div class="token-card js-reveal">
+            <pre class="http-flow http-flow--light"><code>Клієнт ──── запит ────► Сервер
+Клієнт ◄─── відповідь ── Сервер
+✓ з'єднання закрито</code></pre>
+          </div>
+          <p class="slide__lead js-reveal">Клієнт запитав → сервер відповів → з'єднання закрилось.</p>
+          <p class="slide__lead slide__lead--warn js-reveal"><strong>Проблеми:</strong></p>
+          <ul class="content-list content-list--compact content-list--http-story">
+            <li class="content-list__item content-list__item--warning">
+              <strong>Немає стримінгу</strong> — чекаєш увесь відповідь цілком, поганий UX
+            </li>
+            <li class="content-list__item content-list__item--warning">
+              Сервер не може сам надіслати дані клієнту без нового запиту
+            </li>
+            <li class="content-list__item content-list__item--warning">
+              <strong>Довгі операції</strong> — якщо AI «думає» 30 секунд, з'єднання просто висить і ти не знаєш, що відбувається
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide slide--http-story" aria-label="SSE в MCP — канал 1">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--http-flow">
+          <p class="slide__eyebrow js-reveal">Крок 2</p>
+          <h2 class="slide__heading js-reveal">SSE в MCP · канал 1</h2>
+          <p class="slide__lead js-reveal">Слухаємо сервер — тримаємо з'єднання відкритим:</p>
+          <div class="token-card js-reveal">
+            <pre class="http-flow http-flow--light"><code># Канал 1 — слухаємо сервер
+Клієнт ──── GET /sse ─────────────► Сервер
+Клієнт ◄════ тримаємо відкритим ════ Сервер</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--http-story" aria-label="SSE в MCP — канал 2">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--http-flow">
+          <p class="slide__eyebrow js-reveal">Крок 2</p>
+          <h2 class="slide__heading js-reveal">SSE в MCP · канал 2</h2>
+          <p class="slide__lead js-reveal">Надсилаємо команди окремим POST — відповідь приходить через перший канал:</p>
+          <div class="token-card js-reveal">
+            <pre class="http-flow http-flow--light"><code># Канал 2 — надсилаємо команди
+Клієнт ──── POST /message ────────► Сервер
+
+# Відповідь приходить через ПЕРШИЙ канал
+Клієнт ◄─── результат ────────────── Сервер</code></pre>
+          </div>
+          <ul class="content-list content-list--compact content-list--http-story">
+            <li class="content-list__item content-list__item--warning">Два endpoint — складно підтримувати</li>
+            <li class="content-list__item content-list__item--warning">З'єднання SSE треба тримати постійно</li>
+            <li class="content-list__item content-list__item--warning">Якщо SSE впав — усе ламається</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide slide--http-story" aria-label="Крок 3 — Streamable HTTP">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--http-flow">
+          <p class="slide__eyebrow js-reveal">Крок 3</p>
+          <h2 class="slide__heading js-reveal">Streamable HTTP</h2>
+          <p class="slide__lead js-reveal">
+            HTTP/1.1 вміє слати відповідь <strong>кусками (chunked)</strong> — це і використовує сучасний MCP transport.
+          </p>
+          <div class="token-card js-reveal">
+            <pre class="http-flow http-flow--light"><code>Клієнт ──── POST /mcp ─────────────► Сервер
+Клієнт ◄─── chunk 1 ──────────────── Сервер
+Клієнт ◄─── chunk 2 ──────────────── Сервер
+Клієнт ◄─── chunk 3 ──────────────── Сервер
+✓ з'єднання закрито</code></pre>
+          </div>
+          <p class="slide__lead js-reveal">
+            Один endpoint, один запит, відповідь стримом — <strong>простіше і надійніше</strong>, ніж два канали SSE+POST.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide slide--compare" aria-label="Підсумкова таблиця HTTP SSE Streamable HTTP">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--compare slide__inner--compare-wide">
+          <p class="slide__eyebrow js-reveal">Підсумок</p>
+          <h2 class="slide__heading js-reveal">HTTP vs SSE vs Streamable HTTP</h2>
+          <div class="compare-table-wrap js-reveal">
+            <table class="compare-table compare-table--matrix">
+              <colgroup>
+                <col class="compare-table__col-label" />
+                <col class="compare-table__col-data" />
+                <col class="compare-table__col-data" />
+                <col class="compare-table__col-data" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th scope="col" class="compare-table__th"></th>
+                  <th scope="col" class="compare-table__th">Звичайний HTTP</th>
+                  <th scope="col" class="compare-table__th">SSE</th>
+                  <th scope="col" class="compare-table__th">Streamable HTTP</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="content-list__item compare-table__row">
+                  <td class="compare-table__mark compare-table__mark--label">Endpoint</td>
+                  <td>1</td>
+                  <td>2</td>
+                  <td>1</td>
+                </tr>
+                <tr class="content-list__item compare-table__row">
+                  <td class="compare-table__mark compare-table__mark--label">З'єднання</td>
+                  <td>Закривається</td>
+                  <td>Постійне</td>
+                  <td>Закривається</td>
+                </tr>
+                <tr class="content-list__item compare-table__row">
+                  <td class="compare-table__mark compare-table__mark--label">Стримінг</td>
+                  <td>✗</td>
+                  <td>✓</td>
+                  <td>✓</td>
+                </tr>
+                <tr class="content-list__item compare-table__row compare-table__row--pro">
+                  <td class="compare-table__mark compare-table__mark--label">У MCP</td>
+                  <td>Старий</td>
+                  <td>Старий</td>
+                  <td>Новий 2025</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Аналогія HTTP SSE Streamable HTTP">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Аналогія</p>
+          <h2 class="slide__heading js-reveal">Три підходи простими словами</h2>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal">
+              <strong>Звичайний HTTP</strong> — подзвонив, запитав, поклав слухавку
+            </li>
+            <li class="content-list__item js-reveal">
+              <strong>SSE</strong> — два телефони: один завжди слухає, другим говориш ти
+            </li>
+            <li class="content-list__item js-reveal">
+              <strong>Streamable HTTP</strong> — один телефон: подзвонив, відповідають поступово, поклав слухавку
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Block 7: Three transports -->
+      <section class="slide slide--block-intro" aria-label="Блок 7 — Три transport">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 7</p>
+          <h2 class="slide__title js-reveal">Три transport в коді</h2>
+          <p class="slide__subtitle js-reveal">Один параметр — різний канал</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Три transport коду">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Три transport</p>
+          <h2 class="slide__heading js-reveal">Перемикання transport</h2>
+          <div class="token-card js-reveal">
+            <pre class="slide__code"><code># stdio (за замовчуванням)
+mcp.run()
+
+# SSE (legacy)
+mcp.run(transport="sse", host="127.0.0.1", port=8000)
+
+# Streamable HTTP
+mcp.run(transport="streamable-http", host="127.0.0.1", port=8000)</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Final -->
+      <section class="slide" aria-label="Підсумки">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Фінал заняття</p>
+          <h2 class="slide__heading js-reveal">Підсумки</h2>
+          <p class="slide__lead js-reveal">
+            На цій лекції ми розібрали <strong>transport layer</strong> MCP: локальний <strong>stdio</strong>
+            (subprocess, command/args) і мережевий <strong>Streamable HTTP</strong> (url, сесії, auth для remote).
+          </p>
+          <p class="slide__lead js-reveal">
+            При stdio кожне з'єднання Client↔Server — окремий процес; HTTP дозволяє одному серверу обслуговувати багато клієнтів.
+          </p>
+          <p class="slide__lead js-reveal">
+            У наступній лекції перейдемо до <strong>практики</strong>: створимо власний локальний stdio MCP-сервер на Python.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <nav class="nav" aria-label="Навігація по слайдах">
+      <button type="button" class="nav__btn" id="prev" aria-label="Попередній слайд">←</button>
+      <span class="nav__progress" id="navProgress" aria-live="polite">1 / 31</span>
+      <div class="nav__dots" id="dots" role="tablist" aria-label="Слайди"></div>
+      <button type="button" class="nav__btn" id="next" aria-label="Наступний слайд">→</button>
+    </nav>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

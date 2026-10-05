@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hillel MAX — Урок 6 · Розробка qauto MCP server</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="deck" id="deck">
+<section class="slide slide--active" data-slide="0" aria-label="Титульний слайд">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/main%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--title">
+          <img
+            class="slide__logo"
+            src="../video%20and%20pcitures/Hillel%20MAX%20Logo/logo-w.svg"
+            alt="Hillel MAX"
+            width="280"
+            height="39"
+          />
+          <p class="slide__eyebrow js-reveal">
+            <span class="slide__tech-chip">
+              <img src="../video%20and%20pcitures/icons/mcp-color.svg" alt="" width="20" height="20" />
+              IT · Model Context Protocol
+            </span>
+          </p>
+          <h1 class="slide__title js-reveal">Розробка qauto MCP server</h1>
+          <p class="slide__subtitle js-reveal">Практика: від API додатку до tools для агента</p>
+          <div class="tech-chips js-reveal" aria-hidden="true">
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/python-color.svg" alt="" />Python</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/mcp-color.svg" alt="" />FastMCP</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/mcp-color.svg" alt="" />qauto</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/cursor-color.svg" alt="" />Cursor</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Plan -->
+      
+
+<section class="slide" aria-label="План заняття">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--plan">
+          <p class="slide__eyebrow slide__eyebrow--accent js-reveal-plan-header">Урок 6</p>
+          <h2 class="slide__heading js-reveal-plan-header">План заняття</h2>
+          <ol class="plan-list">
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">01</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Вступ</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">02</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/rest.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Огляд додатку</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">03</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/json.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Огляд API методів</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">04</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/python.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Налаштування середовища</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">05</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/python.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Додавання API-методу signup</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">06</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Правила та рекомендації</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Block 1: Вступ -->
+      
+
+<section class="slide slide--block-intro" aria-label="Блок 1 — Вступ">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 1</p>
+          <h2 class="slide__title js-reveal">Вступ</h2>
+          <p class="slide__subtitle js-reveal">Від мінімального сервера до реального проєкту</p>
+        </div>
+      </section>
+
+      
+
+<section class="slide" aria-label="Контекст лекції">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Вступ</p>
+          <h2 class="slide__heading js-reveal">Від демо до qauto</h2>
+          <p class="slide__lead js-reveal">
+            На попередній лекції — мінімальний MCP на <strong>FastMCP</strong> і <strong>stdio</strong>: один tool і перевірка в Inspector.
+          </p>
+          <p class="slide__lead js-reveal">
+            Сьогодні підключаємо сервер до REST API навчального додатку <strong>qauto</strong> (Hillel Auto).
+          </p>
+          <p class="slide__lead js-reveal">
+            Мета: агент реєструє user, додає авто в гараж і читає список машин — природною мовою, без кліків у UI.
+          </p>
+        </div>
+      </section>
+
+      
+
+<section class="slide" aria-label="План заняття коротко">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Вступ</p>
+          <h2 class="slide__heading js-reveal">Що зробимо</h2>
+          <p class="slide__lead js-reveal">
+            Стек: <strong>mcp[cli]</strong>, <strong>httpx</strong>, <strong>pydantic</strong>, <strong>python-dotenv</strong>.
+          </p>
+          <p class="slide__lead js-reveal">
+            Спочатку — додаток і повний JSON-контракт API. Потім — один <code>main.py</code> з базовим tool <code>signup</code>.
+          </p>
+          <p class="slide__lead js-reveal">
+            Спільний <code>AsyncClient</code> тримає cookie сесії після signup. На виході — робочий qauto MCP server, готовий до розширення новими методами.
+          </p>
+        </div>
+      </section>
+
+      <!-- Block 2: Налаштування середовища -->
+      
+
+<section class="slide slide--block-intro" aria-label="Блок 2 — Налаштування середовища">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 2</p>
+          <h2 class="slide__title js-reveal">Налаштування середовища</h2>
+          <p class="slide__subtitle js-reveal">Залежності для qauto MCP server</p>
+        </div>
+      </section>
+
+      
+
+      <section class="slide" aria-label="Залежності проєкту">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--stack">
+          <p class="slide__eyebrow js-reveal">Середовище</p>
+          <h2 class="slide__heading js-reveal">Що ставимо</h2>
+          <div class="tech-chips tech-chips--stack js-reveal">
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/mcp-color.svg" alt="" />mcp[cli]</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/httpx-color.png" alt="" />httpx</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/dotenv-color.svg" alt="" />python-dotenv</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/pydantic-color.svg" alt="" />pydantic</span>
+          </div>
+        </div>
+      </section>
+
+
+<section class="slide" aria-label="Чому pydantic якщо є FastMCP">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Середовище</p>
+          <h2 class="slide__heading js-reveal">Чому pydantic, якщо є FastMCP</h2>
+          <p class="slide__lead js-reveal">
+            Раніше вистачало type hints: <code>title: str</code>, <code>priority: str = "normal"</code> — FastMCP сам будував JSON-схему. Це працює лише для <strong>плоских простих</strong> параметрів.
+          </p>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal">Вкладені структури — обʼєкт із кількома полями всередині</li>
+            <li class="content-list__item js-reveal">Строга валідація — наприклад, <code>priority</code> лише <code>"low" | "normal" | "high"</code></li>
+            <li class="content-list__item js-reveal">Чітка схема відповіді, а не просто <code>str</code></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Block: Правила та рекомендації -->
+      <section class="slide slide--block-intro" aria-label="Блок — Правила та рекомендації">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 6</p>
+          <h2 class="slide__title js-reveal">Правила та рекомендації</h2>
+          <p class="slide__subtitle js-reveal">Як описувати MCP tools для моделі</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Що бачить модель">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Практики</p>
+          <h2 class="slide__heading js-reveal">Що бачить модель</h2>
+          <p class="slide__lead js-reveal">
+            Модель <strong>не читає</strong> тіло функції. Вона бачить лише <strong>імʼя</strong>, <strong>docstring</strong> і <strong>схему параметрів</strong>.
+          </p>
+          <p class="slide__lead js-reveal">
+            Тому якість tool = якість опису, а не лише робочий код всередині.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Іменування tools">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Практики</p>
+          <h2 class="slide__heading js-reveal">1. Іменування</h2>
+          <div class="compare-pair js-reveal">
+            <div class="compare-card compare-card--good">
+              <p class="compare-card__label">Добре</p>
+              <pre class="slide__code slide__code--compact"><code>@mcp.tool()
+async def signup(...): ...
+
+@mcp.tool()
+async def get_profile(...): ...
+
+@mcp.tool()
+async def create_task(...): ...
+
+# create_* get_* update_*
+# delete_* list_* search_*</code></pre>
+            </div>
+            <div class="compare-card compare-card--bad">
+              <p class="compare-card__label">Погано</p>
+              <pre class="slide__code slide__code--compact"><code>@mcp.tool()
+async def task_handler(...): ...
+
+@mcp.tool()
+async def process(...): ...
+
+# схожі імена плутають модель:
+# update_task vs update_tasks
+# → update_task + bulk_update_tasks</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--code-tall" aria-label="Docstring для моделі">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Практики</p>
+          <h2 class="slide__heading js-reveal">2. Docstring</h2>
+          <p class="slide__lead slide__lead--tight js-reveal">
+            Модель читає docstring замість тіла функції
+          </p>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>@mcp.tool()
+async def create_task(
+    title: str,
+    priority: str = "normal",
+) -> str:
+    """Створює нову задачу в системі.
+
+    Використовуй, коли користувач просить додати
+    або створити задачу/тікет.
+    Не використовуй для оновлення — є update_task.
+
+    Args:
+        title: Коротка назва (обовʼязково, не порожня).
+        priority: "low", "normal" або "high".
+            За замовчуванням "normal".
+
+    Returns:
+        Рядок з ID і підтвердженням створення.
+    """</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Що має бути в docstring">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Практики</p>
+          <h2 class="slide__heading js-reveal">Docstring — чекліст</h2>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal">
+              <strong>Що робить</strong> — одне речення на початку
+            </li>
+            <li class="content-list__item js-reveal">
+              <strong>Коли використовувати</strong> — і коли <strong>не</strong> використовувати, якщо є схожий tool
+            </li>
+            <li class="content-list__item js-reveal">
+              <strong>Формат / обмеження параметрів</strong>, якщо тип цього не покриває (наприклад, UUID)
+            </li>
+            <li class="content-list__item js-reveal">
+              <strong>Що повертається</strong> — за форматом, не за конкретним значенням
+            </li>
+            <li class="content-list__item js-reveal">
+              Пишіть так, ніби пояснюєте tool <strong>незнайомій людині</strong>, а не собі
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Гранулярність tools">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Практики</p>
+          <h2 class="slide__heading js-reveal">3. Гранулярність</h2>
+          <div class="compare-pair js-reveal">
+            <div class="compare-card compare-card--good">
+              <p class="compare-card__label">Добре</p>
+              <pre class="slide__code slide__code--compact"><code># Одна фраза = один tool
+create_task(...)
+update_task(
+  task_id,
+  title=None,
+  priority=None,
+)
+delete_task(task_id)
+
+# «створи задачу»
+# «онови задачу»
+# «видали задачу»</code></pre>
+            </div>
+            <div class="compare-card compare-card--bad">
+              <p class="compare-card__label">Погано</p>
+              <pre class="slide__code slide__code--compact"><code># Надто широко
+manage_task(action=...)
+# create|update|delete
+# → розмита схема
+
+# Надто дрібно
+set_task_title
+set_task_priority
+set_task_status</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--code-tall" aria-label="Типізація і pydantic">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Практики</p>
+          <h2 class="slide__heading js-reveal">4. Типи і Pydantic</h2>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>from typing import Literal
+from pydantic import BaseModel, Field
+
+class CreateTaskRequest(BaseModel):
+    title: str = Field(
+        ..., min_length=1,
+        description="Назва задачі",
+    )
+    priority: Literal["low", "normal", "high"] = "normal"
+    due_date: str | None = Field(
+        None,
+        description="Дата YYYY-MM-DD",
+    )</code></pre>
+          </div>
+          <ul class="content-list content-list--tight">
+            <li class="content-list__item js-reveal"><code>Literal</code> замість голого <code>str</code></li>
+            <li class="content-list__item js-reveal"><code>Field(description=...)</code> — бачить модель</li>
+            <li class="content-list__item js-reveal">Опційні поля — завжди з дефолтом</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide slide--code-tall" aria-label="Помилки в tools">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Практики</p>
+          <h2 class="slide__heading js-reveal">5. Помилки</h2>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>@mcp.tool()
+async def get_task(task_id: str) -> str:
+    """Повертає задачу за ID."""
+    try:
+        data = await client.get(f"/tasks/{task_id}")
+        return str(data)
+    except httpx.HTTPStatusError as e:
+        if e.response.status_code == 404:
+            return f"Задачу {task_id} не знайдено."
+        return f"Помилка API: {e.response.status_code}"
+    except httpx.TimeoutException:
+        return "Сервіс не відповідає, спробуйте пізніше."</code></pre>
+          </div>
+          <ul class="content-list content-list--tight">
+            <li class="content-list__item js-reveal">Читабельний текст як результат — не traceback</li>
+            <li class="content-list__item js-reveal">404 ≠ 500 ≠ timeout — різні повідомлення</li>
+            <li class="content-list__item js-reveal">Без stack trace, внутрішніх URL і ключів</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide slide--code-tall" aria-label="Побічні ефекти">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Практики</p>
+          <h2 class="slide__heading js-reveal">6. Побічні ефекти</h2>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>@mcp.tool()
+async def delete_task(task_id: str) -> str:
+    """
+    Безповоротно видаляє задачу за ID.
+    Цю дію не можна скасувати.
+    Використовуй лише якщо користувач
+    явно підтвердив видалення.
+    """</code></pre>
+          </div>
+          <ul class="content-list content-list--tight">
+            <li class="content-list__item js-reveal">Незворотні дії — явно в docstring</li>
+            <li class="content-list__item js-reveal">За потреби патерн <strong>draft → confirm</strong></li>
+            <li class="content-list__item js-reveal">Видалення, повідомлення, фінанси — з обережністю</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide slide--code-tall" aria-label="Обмеження обсягу відповіді">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Практики</p>
+          <h2 class="slide__heading js-reveal">7. Обсяг відповіді</h2>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>@mcp.tool()
+async def list_tasks(
+    limit: int = 20,
+    status: str | None = None,
+) -> str:
+    """Список задач (макс. limit, дефолт 20)."""
+    data = await client.get(
+        "/tasks",
+        params={"limit": limit, "status": status},
+    )
+    return format_tasks_compact(data)</code></pre>
+          </div>
+          <ul class="content-list content-list--tight">
+            <li class="content-list__item js-reveal">Завжди <code>limit</code> / <code>page</code> з розумним дефолтом</li>
+            <li class="content-list__item js-reveal">Компактний формат: <code>id — title — status</code></li>
+            <li class="content-list__item js-reveal">Не згодовуйте моделі гігантський сирий JSON</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Версіонування і сумісність">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Практики</p>
+          <h2 class="slide__heading js-reveal">8. Сумісність</h2>
+          <p class="slide__lead js-reveal">
+            Якщо змінюєте сигнатуру існуючого tool (обовʼязковий параметр, інший формат відповіді) —
+            клієнти зі <strong>старою схемою</strong> можуть зламатись.
+          </p>
+          <div class="practice-accordion js-reveal">
+            <div class="practice-accordion__item practice-accordion__item--open">
+              <p class="practice-accordion__title">Нові параметри — опційні з дефолтом</p>
+              <p class="practice-accordion__body">
+                Додавайте поля як <code>tags: list[str] | None = None</code>, а не як обовʼязкові.
+                Старі клієнти продовжать працювати без змін.
+              </p>
+            </div>
+            <div class="practice-accordion__item practice-accordion__item--open">
+              <p class="practice-accordion__title">Не міняти формат відповіді без причини</p>
+              <p class="practice-accordion__body">
+                Host уже «знає» стару схему. Раптова зміна структури повернення ламає очікування
+                моделі й інтеграції.
+              </p>
+            </div>
+            <div class="practice-accordion__item practice-accordion__item--open">
+              <p class="practice-accordion__title">Breaking change → новий tool <code>*_v2</code></p>
+              <p class="practice-accordion__body">
+                При серйозних змінах заведіть <code>create_task_v2</code>, а старий
+                <code>create_task</code> залиште для зовнішніх клієнтів.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--code-tall" aria-label="Тестування tools">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Практики</p>
+          <h2 class="slide__heading js-reveal">9. Тестування</h2>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>@pytest.mark.asyncio
+async def test_create_task():
+    result = await create_task(
+        title="Test task",
+        priority="high",
+    )
+    assert "створена" in result</code></pre>
+          </div>
+          <ul class="content-list content-list--tight">
+            <li class="content-list__item js-reveal">Спочатку <strong>Inspector</strong> / юніт-тест</li>
+            <li class="content-list__item js-reveal">Потім — підключення до Host</li>
+            <li class="content-list__item js-reveal">Ловить помилки схеми до «сліпих» викликів моделлю</li>
+          </ul>
+        </div>
+      </section>
+
+<section class="slide" aria-label="Підсумки">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Фінал заняття</p>
+          <h2 class="slide__heading js-reveal">Підсумки</h2>
+          <p class="slide__lead js-reveal">
+            На цій лекції — API qauto, <strong>MCP server</strong> в <code>main.py</code> і <strong>правила</strong> для якісних tools.
+          </p>
+          <p class="slide__lead js-reveal">
+            Далі — <strong>signin</strong>, <strong>add_car</strong> і <strong>get_cars</strong> для повноцінної роботи з гаражем.
+          </p>
+        </div>
+      </section>
+    
+
+    </div>
+
+    <nav class="nav" aria-label="Навігація по слайдах">
+      <button type="button" class="nav__btn" id="prev" aria-label="Попередній слайд">←</button>
+      <span class="nav__progress" id="navProgress" aria-live="polite">1 / 21</span>
+      <div class="nav__dots" id="dots" role="tablist" aria-label="Слайди"></div>
+      <button type="button" class="nav__btn" id="next" aria-label="Наступний слайд">→</button>
+    </nav>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

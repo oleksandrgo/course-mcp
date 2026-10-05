@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hillel MAX — Урок 9 · Використання resources в MCP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="deck" id="deck">
+      <section class="slide slide--active" data-slide="0" aria-label="Титульний слайд">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/main%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--title">
+          <img
+            class="slide__logo"
+            src="../video%20and%20pcitures/Hillel%20MAX%20Logo/logo-w.svg"
+            alt="Hillel MAX"
+            width="280"
+            height="39"
+          />
+          <p class="slide__eyebrow js-reveal">
+            <span class="slide__tech-chip">
+              <img src="../video%20and%20pcitures/icons/mcp-color.svg" alt="" width="20" height="20" />
+              IT · Model Context Protocol
+            </span>
+          </p>
+          <h1 class="slide__title js-reveal">Використання resources в MCP</h1>
+          <p class="slide__subtitle js-reveal">Дані й контекст за URI для агента</p>
+          <div class="tech-chips js-reveal" aria-hidden="true">
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/python-color.svg" alt="" />Python</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/mcp-color.svg" alt="" />FastMCP</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/mcp-color.svg" alt="" />resources</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/cursor-color.svg" alt="" />Cursor</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="План заняття">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--plan">
+          <p class="slide__eyebrow slide__eyebrow--accent js-reveal-plan-header">Урок 9</p>
+          <h2 class="slide__heading js-reveal-plan-header">План заняття</h2>
+          <ol class="plan-list">
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">01</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Вступ</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">02</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/json.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Що таке resources</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">03</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Навіщо і коли використовувати</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">04</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/python.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Приклад: brands і models</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">05</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/json.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Як описувати resources</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">06</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Практика</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="slide slide--block-intro" aria-label="Блок 1 — Вступ">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img class="slide__watermark" src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg" alt="" aria-hidden="true" />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 1</p>
+          <h2 class="slide__title js-reveal">Вступ</h2>
+          <p class="slide__subtitle js-reveal">Від tools і prompts до resources</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Контекст лекції">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Вступ</p>
+          <h2 class="slide__heading js-reveal">Що вже є</h2>
+          <p class="slide__lead js-reveal">
+            У qauto MCP server уже є <strong>tools</strong> і <strong>prompts</strong>.
+          </p>
+          <p class="slide__lead js-reveal">
+            Сьогодні додаємо <strong>resources</strong> — дані за URI. Без довідника id модель не знає, які <code>carBrandId</code> і <code>carModelId</code> передати в <code>add_car</code>.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide slide--block-intro" aria-label="Блок 2 — Що таке resources">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img class="slide__watermark" src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg" alt="" aria-hidden="true" />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 2</p>
+          <h2 class="slide__title js-reveal">Що таке resources</h2>
+          <p class="slide__subtitle js-reveal">Дані й контекст за URI</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Визначення resources">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Що таке resources</p>
+          <h2 class="slide__heading js-reveal">Визначення</h2>
+          <p class="slide__lead js-reveal">
+            <strong>Resources</strong> — спосіб віддати клієнту дані для контексту моделі: довідники, схеми, документи.
+          </p>
+          <p class="slide__lead js-reveal">
+            Кожен resource має унікальний <strong>URI</strong>. Host читає його і додає вміст у розмову.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Resources vs tools vs prompts">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Що таке resources</p>
+          <h2 class="slide__heading js-reveal">Не tools і не prompts</h2>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal"><strong>Tools</strong> — дії (API, створення авто)</li>
+            <li class="content-list__item js-reveal"><strong>Prompts</strong> — шаблон постановки задачі</li>
+            <li class="content-list__item js-reveal"><strong>Resources</strong> — дані для читання (довідник id)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Application-driven">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Що таке resources</p>
+          <h2 class="slide__heading js-reveal">Як це виглядає для користувача</h2>
+          <p class="slide__lead js-reveal">
+            Resources — <strong>application-driven</strong>: Host вирішує, як показувати список і коли підтягувати контекст.
+          </p>
+          <p class="slide__lead js-reveal">
+            Користувач може обрати resource у UI, або Host додасть його автоматично.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide slide--block-intro" aria-label="Блок 3 — Навіщо і коли">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img class="slide__watermark" src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg" alt="" aria-hidden="true" />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 3</p>
+          <h2 class="slide__title js-reveal">Навіщо і коли використовувати</h2>
+          <p class="slide__subtitle js-reveal">Практичні правила</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Навіщо resources">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Навіщо і коли</p>
+          <h2 class="slide__heading js-reveal">Навіщо</h2>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal">Дати моделі стабільний контекст (довідники, схеми, документи)</li>
+            <li class="content-list__item js-reveal">Не дублювати довгі дані в кожному prompt</li>
+            <li class="content-list__item js-reveal">Відділити «прочитати» від «зробити»</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide slide--block-intro" aria-label="Блок 4 — Приклад brands models">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img class="slide__watermark" src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg" alt="" aria-hidden="true" />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 4</p>
+          <h2 class="slide__title js-reveal">Приклад: brands і models</h2>
+          <p class="slide__subtitle js-reveal">Довідник для add_car</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Ідея довідника">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Приклад</p>
+          <h2 class="slide__heading js-reveal">Ідея</h2>
+          <p class="slide__lead js-reveal">
+            Два resources: повний каталог і один бренд за id у URI.
+          </p>
+          <p class="slide__lead js-reveal">
+            Агент читає id і викликає <code>add_car</code> — без вгадування <code>carBrandId</code> / <code>carModelId</code>.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Приклади id">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Приклад</p>
+          <h2 class="slide__heading js-reveal">Приклади id</h2>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal">Audi R8 → brand <code>1</code>, model <code>2</code></li>
+            <li class="content-list__item js-reveal">BMW X5 → brand <code>2</code>, model <code>8</code></li>
+            <li class="content-list__item js-reveal">Ford Focus → brand <code>3</code>, model <code>12</code></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="URI з параметром id">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Приклад</p>
+          <h2 class="slide__heading js-reveal">URI може мати id</h2>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal">
+              Статичний: <code>qauto://cars/catalog</code> — увесь довідник
+            </li>
+            <li class="content-list__item js-reveal">
+              З параметром: <code>qauto://cars/brands/{brand_id}</code>
+            </li>
+            <li class="content-list__item js-reveal">
+              Приклад читання: <code>qauto://cars/brands/1</code> → моделі Audi
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide slide--code" aria-label="Код brands_models">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--code">
+          <p class="slide__eyebrow js-reveal">Приклад</p>
+          <h2 class="slide__heading js-reveal">Код на FastMCP</h2>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>@mcp.resource("qauto://cars/catalog", ...)
+def get_car_catalog() -> str:
+    return json.dumps(catalog)
+
+@mcp.resource("qauto://cars/brands/{brand_id}", ...)
+def get_car_brand(brand_id: str) -> str:
+    # brand_id з URI → моделі одного бренду
+    return json.dumps(brand)</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--diagram diagram-slide" aria-label="Як це працює по кроках">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--diagram slide__inner--seq-diagram">
+          <p class="slide__eyebrow js-reveal">Приклад</p>
+          <h2 class="slide__heading js-reveal">Як це працює по кроках</h2>
+          <div class="mcp-seq-flow js-reveal" role="img" aria-label="Sequence diagram з resources і tools">
+            <div class="mcp-seq-flow__canvas">
+              <div class="mcp-seq-flow__participants mcp-seq-flow__step">
+                <div class="mcp-seq-flow__participant"><span class="mcp-seq-flow__participant-name">User</span></div>
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--app">
+                  <span class="mcp-seq-flow__participant-name">App</span>
+                  <span class="mcp-seq-flow__participant-hint">Host</span>
+                </div>
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--llm"><span class="mcp-seq-flow__participant-name">LLM</span></div>
+                <div class="mcp-seq-flow__participant"><span class="mcp-seq-flow__participant-name">MCP Server</span></div>
+              </div>
+              <div class="mcp-seq-flow__lifelines mcp-seq-flow__step" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+              <div class="mcp-seq-flow__stage">
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c1-2"><span class="mcp-seq-flow__label">Selects resource</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4"><span class="mcp-seq-flow__label">Initializes connection</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4 mcp-seq-flow__track--reverse"><span class="mcp-seq-flow__label">Available tools &amp; resources</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4"><span class="mcp-seq-flow__label">resources/read</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4 mcp-seq-flow__track--reverse"><span class="mcp-seq-flow__label">Brands/models catalog</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3"><span class="mcp-seq-flow__label">Sends query + resource</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3 mcp-seq-flow__track--reverse"><span class="mcp-seq-flow__label">Responds with tool call</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4"><span class="mcp-seq-flow__label">add_car (brand + model id)</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4 mcp-seq-flow__track--reverse"><span class="mcp-seq-flow__label">Responds with tool response</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3"><span class="mcp-seq-flow__label">Sends tool response</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3 mcp-seq-flow__track--reverse"><span class="mcp-seq-flow__label">Responds with final answer</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c1-2 mcp-seq-flow__track--reverse"><span class="mcp-seq-flow__label">Responds with final answer</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span></div></div>
+              </div>
+              <div class="mcp-seq-flow__participants mcp-seq-flow__participants--bottom">
+                <div class="mcp-seq-flow__participant"><span class="mcp-seq-flow__participant-name">User</span></div>
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--app"><span class="mcp-seq-flow__participant-name">App</span></div>
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--llm"><span class="mcp-seq-flow__participant-name">LLM</span></div>
+                <div class="mcp-seq-flow__participant"><span class="mcp-seq-flow__participant-name">MCP Server</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--diagram diagram-slide" aria-label="Ресурс через tool">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--diagram slide__inner--seq-diagram">
+          <p class="slide__eyebrow js-reveal">Приклад</p>
+          <h2 class="slide__heading js-reveal">Опційно: ресурс через tool</h2>
+          <div class="mcp-seq-flow js-reveal" role="img" aria-label="Sequence: LLM викликає tool, який всередині читає resource">
+            <div class="mcp-seq-flow__canvas">
+              <div class="mcp-seq-flow__participants mcp-seq-flow__step">
+                <div class="mcp-seq-flow__participant"><span class="mcp-seq-flow__participant-name">User</span></div>
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--app">
+                  <span class="mcp-seq-flow__participant-name">App</span>
+                  <span class="mcp-seq-flow__participant-hint">Host</span>
+                </div>
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--llm"><span class="mcp-seq-flow__participant-name">LLM</span></div>
+                <div class="mcp-seq-flow__participant"><span class="mcp-seq-flow__participant-name">MCP Server</span></div>
+              </div>
+              <div class="mcp-seq-flow__lifelines mcp-seq-flow__step" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+              <div class="mcp-seq-flow__stage">
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c1-2"><span class="mcp-seq-flow__label">Sends query</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4"><span class="mcp-seq-flow__label">Initializes connection</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4 mcp-seq-flow__track--reverse"><span class="mcp-seq-flow__label">Available tools (get_catalog…)</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3"><span class="mcp-seq-flow__label">Sends query + tools</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3 mcp-seq-flow__track--reverse"><span class="mcp-seq-flow__label">tool_use: get_catalog</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4"><span class="mcp-seq-flow__label">tools/call get_catalog</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4 mcp-seq-flow__track--reverse"><span class="mcp-seq-flow__label">Inside tool → read resource</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3"><span class="mcp-seq-flow__label">Sends catalog (tool result)</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3 mcp-seq-flow__track--reverse"><span class="mcp-seq-flow__label">tool_use: add_car</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4"><span class="mcp-seq-flow__label">add_car (brand + model id)</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-4 mcp-seq-flow__track--reverse"><span class="mcp-seq-flow__label">Responds with tool response</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3"><span class="mcp-seq-flow__label">Sends tool response</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c2-3 mcp-seq-flow__track--reverse"><span class="mcp-seq-flow__label">Responds with final answer</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span></div></div>
+                <div class="mcp-seq-flow__row mcp-seq-flow__step"><div class="mcp-seq-flow__track mcp-seq-flow__track--c1-2 mcp-seq-flow__track--reverse"><span class="mcp-seq-flow__label">Responds with final answer</span><span class="mcp-seq-flow__line"><span class="mcp-seq-flow__dot mcp-seq-flow__dot--reverse"></span></span></div></div>
+              </div>
+              <div class="mcp-seq-flow__participants mcp-seq-flow__participants--bottom">
+                <div class="mcp-seq-flow__participant"><span class="mcp-seq-flow__participant-name">User</span></div>
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--app"><span class="mcp-seq-flow__participant-name">App</span></div>
+                <div class="mcp-seq-flow__participant mcp-seq-flow__participant--llm"><span class="mcp-seq-flow__participant-name">LLM</span></div>
+                <div class="mcp-seq-flow__participant"><span class="mcp-seq-flow__participant-name">MCP Server</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="slide slide--block-intro" aria-label="Блок 5 — Як описувати resources">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img class="slide__watermark" src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg" alt="" aria-hidden="true" />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 5</p>
+          <h2 class="slide__title js-reveal">Як описувати resources</h2>
+          <p class="slide__subtitle js-reveal">URI, description, формат</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Аудиторія опису resources">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Опис resources</p>
+          <h2 class="slide__heading js-reveal">Хто читає опис</h2>
+          <p class="slide__lead js-reveal">
+            Description resource читає <strong>людина або UI Host</strong> у списку контексту.
+          </p>
+          <p class="slide__lead js-reveal">
+            Модель бачить вміст уже після <code>resources/read</code>. Пишіть «для вибору зі списку».
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="URI та іменування">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Опис resources</p>
+          <h2 class="slide__heading js-reveal">URI та іменування</h2>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal">
+              Статичний URI: <code>qauto://cars/catalog</code>
+            </li>
+            <li class="content-list__item js-reveal">
+              З id у шляху: <code>qauto://cars/brands/{brand_id}</code>
+            </li>
+            <li class="content-list__item js-reveal">
+              Параметр URI → аргумент функції: <code>brand_id: str</code>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide slide--block-intro" aria-label="Блок 6 — Практика">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img class="slide__watermark" src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg" alt="" aria-hidden="true" />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 6</p>
+          <h2 class="slide__title js-reveal">Практика</h2>
+          <p class="slide__subtitle js-reveal">Resource + створення авто</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Підсумки">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Фінал заняття</p>
+          <h2 class="slide__heading js-reveal">Підсумки</h2>
+          <p class="slide__lead js-reveal">
+            На цій лекції ми розібрали <strong>resources</strong> у MCP: що це за інтерфейс, коли його використовувати і як описати для людини в списку Host.
+          </p>
+          <p class="slide__lead js-reveal">
+            Також зібрали практичний приклад — довідник brands/models для створення авто через tools.
+          </p>
+          <p class="slide__lead js-reveal">
+            У наступній лекції перейдемо до покращення і структуризації MCP-сервера.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <nav class="nav" aria-label="Навігація по слайдах">
+      <button type="button" class="nav__btn" id="prev" aria-label="Попередній слайд">←</button>
+      <span class="nav__progress" id="navProgress" aria-live="polite">1 / 22</span>
+      <div class="nav__dots" id="dots" role="tablist" aria-label="Слайди"></div>
+      <button type="button" class="nav__btn" id="next" aria-label="Наступний слайд">→</button>
+    </nav>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

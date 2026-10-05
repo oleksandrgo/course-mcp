@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hillel MAX — Урок 7 · Додавання нових методів і розширення функціоналу MCP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="deck" id="deck">
+<section class="slide slide--active" data-slide="0" aria-label="Титульний слайд">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/main%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--title">
+          <img
+            class="slide__logo"
+            src="../video%20and%20pcitures/Hillel%20MAX%20Logo/logo-w.svg"
+            alt="Hillel MAX"
+            width="280"
+            height="39"
+          />
+          <p class="slide__eyebrow js-reveal">
+            <span class="slide__tech-chip">
+              <img src="../video%20and%20pcitures/icons/mcp-color.svg" alt="" width="20" height="20" />
+              IT · Model Context Protocol
+            </span>
+          </p>
+          <h1 class="slide__title js-reveal">Додавання нових методів і розширення функціоналу MCP</h1>
+          <p class="slide__subtitle js-reveal">Практика: signin, add_car, get_cars і сесія клієнта</p>
+          <div class="tech-chips js-reveal" aria-hidden="true">
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/python-color.svg" alt="" />Python</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/mcp-color.svg" alt="" />FastMCP</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/mcp-color.svg" alt="" />qauto</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/cursor-color.svg" alt="" />Cursor</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Plan -->
+      
+
+<section class="slide" aria-label="План заняття">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/northern%20lights%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--plan">
+          <p class="slide__eyebrow slide__eyebrow--accent js-reveal-plan-header">Урок 7</p>
+          <h2 class="slide__heading js-reveal-plan-header">План заняття</h2>
+          <ol class="plan-list">
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">01</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Архітектурне розширення через AsyncClient</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">02</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/json.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Огляд методів</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">03</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/python.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Реалізація методів</span>
+            </li>
+            <li class="plan-list__item js-plan-step">
+              <span class="plan-list__num">04</span>
+              <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/mcp.svg" alt="" width="24" height="24" />
+              <span class="plan-list__text">Висновок</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Block 1: Архітектурне розширення через AsyncClient -->
+      <section class="slide slide--block-intro" aria-label="Блок 1 — Архітектурне розширення через AsyncClient">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow" aria-hidden="true"></div>
+        <img
+          class="slide__watermark"
+          src="../video%20and%20pcitures/Hillel%20MAX%20Logo/symbol.svg"
+          alt=""
+          aria-hidden="true"
+        />
+        <div class="slide__inner slide__inner--title">
+          <p class="slide__eyebrow js-reveal">Блок 1</p>
+          <h2 class="slide__title js-reveal">Архітектурне розширення через AsyncClient</h2>
+          <p class="slide__subtitle js-reveal">Один клієнт — одна сесія для всіх tools</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Чому потрібен спільний клієнт">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">AsyncClient</p>
+          <h2 class="slide__heading js-reveal">Проблема без спільного клієнта</h2>
+          <p class="slide__lead js-reveal">
+            Якщо створювати новий HTTP-клієнт на кожен виклик tool, cookie <code>sid</code> після авторизації втрачається.
+          </p>
+          <p class="slide__lead js-reveal">
+            Тоді <code>add_car</code> і <code>get_cars</code> отримують <strong>401</strong> — сесії вже немає.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Рішення get_client">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/nextflix%20slide.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">AsyncClient</p>
+          <h2 class="slide__heading js-reveal">Рішення: get_client()</h2>
+          <p class="slide__lead js-reveal">
+            Функція <code>get_client()</code> повертає один спільний <strong>httpx.AsyncClient</strong> на весь процес MCP-сервера.
+          </p>
+          <p class="slide__lead js-reveal">
+            Після <code>signup</code> або <code>signin</code> cookie <code>sid</code> зберігається і доступна для всіх наступних tools.
+          </p>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal">Менше дублювання коду</li>
+            <li class="content-list__item js-reveal">Передбачувана поведінка tools</li>
+            <li class="content-list__item js-reveal">Один авторизований контекст для <code>signin</code>, <code>add_car</code>, <code>get_cars</code></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide slide--code" aria-label="Патерн get_client">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--code">
+          <p class="slide__eyebrow js-reveal">AsyncClient</p>
+          <h2 class="slide__heading js-reveal">Базовий патерн</h2>
+          <div class="token-card js-reveal">
+            <pre class="slide__code slide__code--compact"><code>from functools import lru_cache
+import httpx
+
+@lru_cache
+def get_client() -> httpx.AsyncClient:
+    return httpx.AsyncClient(
+        base_url=BASE_URL,
+        timeout=30.0,
+        headers={"Content-Type": "application/json"},
+    )</code></pre>
+          </div>
+          <p class="slide__lead js-reveal">
+            <code>lru_cache</code> гарантує: один інстанс клієнта на процес. Усі tools беруть його через <code>get_client()</code>.
+          </p>
+        </div>
+      </section>
+
+      <!-- Фінал -->
+      <section class="slide" aria-label="Висновок">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Фінал заняття</p>
+          <h2 class="slide__heading js-reveal">Висновок</h2>
+          <p class="slide__lead js-reveal">
+            Спільний <strong>AsyncClient</strong> через <code>get_client()</code> — фундамент розширення qauto MCP server.
+          </p>
+          <p class="slide__lead js-reveal">
+            Без нього нові методи не зможуть працювати в одній сесії після авторизації.
+          </p>
+          <p class="slide__lead js-reveal">
+            Далі — огляд і реалізація методів: <strong>signin</strong>, <strong>add_car</strong>, <strong>get_cars</strong>.
+          </p>
+        </div>
+      </section>
+
+    </div>
+
+    <nav class="nav" aria-label="Навігація по слайдах">
+      <button type="button" class="nav__btn" id="prev" aria-label="Попередній слайд">←</button>
+      <span class="nav__progress" id="navProgress" aria-live="polite">1 / 7</span>
+      <div class="nav__dots" id="dots" role="tablist" aria-label="Слайди"></div>
+      <button type="button" class="nav__btn" id="next" aria-label="Наступний слайд">→</button>
+    </nav>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,87 @@
+{
+  "course": "39330ef3-8f26-8040-94ed-f81e14e7ee78",
+  "plan": "39330ef38f268033be70c11b57f62810",
+  "lectures": {
+    "1": {
+      "title": "Що таке MCP і навіщо він потрібен",
+      "page": "39430ef38f26806eaa2df05ef2b88c9a",
+      "konspekt": "39430ef38f26806d92c0c22aef77b872",
+      "quiz": "39430ef38f2680d6b8eac2b484878db7",
+      "video": "39430ef38f26803da1e8c398a066c346"
+    },
+    "2": {
+      "title": "Приклад роботи існуючих серверів",
+      "page": "39430ef38f268188a12bcd9a3cfeb094",
+      "konspekt": "39430ef38f268180b654e03221d14638",
+      "quiz": "39430ef38f2681c789b4e11907a33d7c",
+      "video": "39430ef38f2681f09831d45a8d1d9807"
+    },
+    "3": {
+      "title": "Основний концепт MCP архітектури",
+      "module": "39630ef38f268125a22bc9162af0214b",
+      "page": "39630ef38f2681ce8c16f1eaa73d65e2",
+      "konspekt": "39630ef38f26813ab5d6c81e7f185596",
+      "quiz": "39630ef38f268199b5e6f37e868b2118",
+      "video": "39630ef38f26815ea403c76e615f736c"
+    },
+    "4": {
+      "title": "Transport layer — stdio і Streamable HTTP",
+      "module": "39630ef38f268125a22bc9162af0214b",
+      "page": "39830ef38f268151b475c191f642139f",
+      "konspekt": "39830ef38f268151ad5feef008a75f77",
+      "quiz": "39830ef38f2681179a2ac2f192d069da",
+      "video": "39830ef38f2681c4a93ad8776035a824"
+    },
+    "5": {
+      "title": "Створення локального MCP сервера (stdio)",
+      "page": "39e30ef38f26814881e0f808e87660e4",
+      "konspekt": "39e30ef38f26810baa76fda28f6f3013",
+      "quiz": "39e30ef38f2681318311f7d8ef059ac8",
+      "video": "39e30ef38f2681faa807cc6aab3672ad"
+    },
+    "6": {
+      "title": "Розробка qauto MCP server",
+      "page": "39e30ef38f268164ba16ec82114a42b8",
+      "konspekt": "39e30ef38f2681f3b40ff56de0ece0c5",
+      "quiz": "39e30ef38f2681629384e9b37e5c7f56",
+      "video": "39e30ef38f2681789ae3c3b717b23fcc"
+    },
+    "7": {
+      "title": "Додавання нових методів і розширення функціоналу MCP",
+      "page": "3a330ef38f26816f9c62fb03f23d0115",
+      "konspekt": "3a330ef38f2681f98a85fa43ee383d3e",
+      "quiz": "3a330ef38f268109ae5ec39a7b50bea0",
+      "video": "3a330ef38f2681d98db1c68874b74d1f"
+    },
+    "8": {
+      "title": "Використання prompts в MCP",
+      "page": "3a530ef38f2681038f83c8ebaaf9e1d8",
+      "konspekt": "3a530ef38f26817d8140f0c9f2ed8aea",
+      "quiz": "3a530ef38f26810fa6a0e40a1f9f3eb3",
+      "video": "3a530ef38f2681b398cbe65862491067"
+    },
+    "9": {
+      "title": "Використання resources в MCP",
+      "page": "3ad30ef38f2681238abec89685109f23",
+      "konspekt": "3ad30ef38f2681b98f44dd4e4856b8f8",
+      "quiz": "3ad30ef38f26815fb6b1e2faaf2d8764",
+      "video": "3ad30ef38f26810ba0c1ef7d0341a784"
+    },
+    "10": {
+      "title": "Покращення і структурізація MCP сервера",
+      "page": "3b030ef38f2681a1a956f1fb902e937e",
+      "konspekt": "3b030ef38f268198baaecaa80fa887ce",
+      "video": "3b030ef38f268161998dfe2aca82e9b1"
+    },
+    "11": {
+      "title": "Міграція MCP на Streamable HTTP",
+      "page": "3b030ef38f2681319c46c0334399966e",
+      "konspekt": "3b030ef38f268126bd5ae420826fc605",
+      "video": "3b030ef38f2681a58632d414e45d234c"
+    }
+  },
+  "references": {
+    "konspektExample": "27230ef38f2681a48d9ef52c3a3d828f",
+    "konspektRequirements": "710d48c848384cbb8aa9a428d0f28226"
+  }
+}
