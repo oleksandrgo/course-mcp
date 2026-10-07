@@ -78,6 +78,21 @@
       "page": "3b030ef38f2681319c46c0334399966e",
       "konspekt": "3b030ef38f268126bd5ae420826fc605",
       "video": "3b030ef38f2681a58632d414e45d234c"
+    },
+    "12": {
+      "title": "Контейнеризація MCP сервера",
+      "module": "39430ef38f2680728725ee4076308009",
+      "page": "3f130ef38f268167aab1e40aa79ae6a3",
+      "konspekt": "3f130ef38f268153b5ece2a1530fb18e",
+      "quiz": "3f130ef38f2681309b30d375c112d9e9",
+      "video": "3f130ef38f2681d681f5fa3b3e1dd3c4"
+    },
+    "13": {
+      "title": "Security in MCP",
+      "page": "3f130ef38f26813798b8d47a3c6e7a4c",
+      "konspekt": "3f130ef38f268125a096eccaa0bc0411",
+      "quiz": "3f130ef38f2681819ff1eef1b5968183",
+      "video": "3f130ef38f26813d941ae24b36f2bf06"
     }
   },
   "references": {
