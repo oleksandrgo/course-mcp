@@ -240,7 +240,9 @@
   }
 
   function getListItems(index) {
-    return slides[index] ? slides[index].querySelectorAll(".content-list__item") : [];
+    return slides[index]
+      ? slides[index].querySelectorAll(".content-list__item, .js-step-card")
+      : [];
   }
 
   function resetListItems(index) {
@@ -359,7 +361,7 @@
         ? ".js-reveal:not(.content-list__item):not(.token-card)"
         : isDiagram
           ? ".js-reveal:not(.content-list__item):not(.mcp-flow__step):not(.mcp-seq-flow__step)"
-          : ".js-reveal:not(.content-list__item)"
+          : ".js-reveal:not(.content-list__item):not(.js-step-card)"
     );
     gsap.fromTo(
       targets,
@@ -419,7 +421,7 @@
             ? ".js-reveal:not(.content-list__item):not(.token-card)"
             : isDiagramIncoming
               ? ".js-reveal:not(.content-list__item):not(.mcp-flow__step):not(.mcp-seq-flow__step)"
-              : ".js-reveal:not(.content-list__item)";
+              : ".js-reveal:not(.content-list__item):not(.js-step-card)";
 
           gsap.set(incoming.querySelectorAll(revealSelector), { opacity: 0, y: 24 });
 
