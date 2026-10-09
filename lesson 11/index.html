@@ -480,42 +480,6 @@ logger.info("tool → %s", name)</code></pre>
         </div>
       </section>
 
-      <section class="slide" aria-label="Чого не вистачає з коробки">
-        <video class="slide__video" autoplay muted loop playsinline preload="auto">
-          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
-        </video>
-        <div class="slide__scrim"></div>
-        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
-        <div class="slide__inner slide__inner--content">
-          <p class="slide__eyebrow js-reveal">Логування</p>
-          <h2 class="slide__heading js-reveal">Чого не вистачає «з коробки»</h2>
-          <ul class="content-list">
-            <li class="content-list__item js-reveal"><strong>httpx</strong> на <code>INFO</code> дає рядок без тіла request/response</li>
-            <li class="content-list__item js-reveal"><strong>httpcore</strong> на <code>DEBUG</code> засипає stderr трейсами — шум, а не користь</li>
-            <li class="content-list__item js-reveal">Вхідний tool видно як <code>CallToolRequest</code> — без імені, аргументів і часу виконання</li>
-          </ul>
-        </div>
-      </section>
-
-      <section class="slide" aria-label="Перевірка логування">
-        <video class="slide__video" autoplay muted loop playsinline preload="auto">
-          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
-        </video>
-        <div class="slide__scrim"></div>
-        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
-        <div class="slide__inner slide__inner--content">
-          <p class="slide__eyebrow js-reveal">Логування</p>
-          <h2 class="slide__heading js-reveal">Перевірка</h2>
-          <ul class="content-list">
-            <li class="content-list__item js-reveal">1. <code>uv run python -m qauto_mcp</code> — перезапустити сервер</li>
-            <li class="content-list__item js-reveal">2. З Cursor викликати <code>get_cars</code> / <code>add_car</code></li>
-            <li class="content-list__item js-reveal">3. У stderr очікуємо ланцюжок: <code>tool → add_car</code> → <code>→ POST .../auth/signin</code> → <code>← 200 ... ms</code> → <code>tool ← add_car ok</code></li>
-            <li class="content-list__item js-reveal">4. <code>password</code> і <code>sid</code> у логах — лише <code>***</code></li>
-            <li class="content-list__item js-reveal">5. <code>LOG_LEVEL=DEBUG</code> — з'являються тіла; <code>LOG_HTTP_BODIES=false</code> — лише method/URL/status/час</li>
-          </ul>
-        </div>
-      </section>
-
       <section class="slide" aria-label="Підсумки">
         <video class="slide__video" autoplay muted loop playsinline preload="auto">
           <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
@@ -540,7 +504,7 @@ logger.info("tool → %s", name)</code></pre>
 
     <nav class="nav" aria-label="Навігація по слайдах">
       <button type="button" class="nav__btn" id="prev" aria-label="Попередній слайд">←</button>
-      <span class="nav__progress" id="navProgress" aria-live="polite">1 / 19</span>
+      <span class="nav__progress" id="navProgress" aria-live="polite">1 / 17</span>
       <div class="nav__dots" id="dots" role="tablist" aria-label="Слайди"></div>
       <button type="button" class="nav__btn" id="next" aria-label="Наступний слайд">→</button>
     </nav>
