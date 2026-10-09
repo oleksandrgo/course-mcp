@@ -458,6 +458,18 @@ body {
   font-weight: 800;
   letter-spacing: -0.01em;
 }
+
+.content-card p {
+  margin: 0.4rem 0 0;
+  color: var(--text-muted);
+  line-height: 1.45;
+  font-size: 0.88rem;
+}
+
+.content-card .slide__code {
+  margin-top: 0.55rem;
+  font-size: clamp(0.55rem, 0.95vw, 0.68rem);
+}
 .token-grid {
   margin-top: 1.1rem;
 }

@@ -35,10 +35,12 @@
             </span>
           </p>
           <h1 class="slide__title js-reveal">Контейнеризація MCP сервера</h1>
+          <p class="slide__subtitle js-reveal">Один образ — той самий HTTP endpoint у Cursor</p>
           <div class="tech-chips js-reveal" aria-hidden="true">
             <span class="tech-chip"><img src="../video%20and%20pcitures/icons/docker.png" alt="" />Docker</span>
             <span class="tech-chip"><img src="../video%20and%20pcitures/icons/mcp-color.svg" alt="" />MCP</span>
             <span class="tech-chip"><img src="../video%20and%20pcitures/icons/python-color.svg" alt="" />Python</span>
+            <span class="tech-chip"><img src="../video%20and%20pcitures/icons/uv-color.svg" alt="" />uv</span>
           </div>
         </div>
       </section>
@@ -56,13 +58,13 @@
             <li class="plan-list__item js-plan-step">
               <span class="plan-list__num">01</span>
               <img class="plan-list__icon" src="../video%20and%20pcitures/icons/w/docker.svg" alt="" width="32" height="32" />
-              <span class="plan-list__text">Контейнеризація MCP сервера</span>
+              <span class="plan-list__text">Навіщо Docker для MCP</span>
             </li>
           </ol>
         </div>
       </section>
 
-      <section class="slide slide--block-intro" aria-label="Блок 1 — Контейнеризація MCP сервера">
+      <section class="slide slide--block-intro" aria-label="Блок 1 — Навіщо Docker для MCP">
         <video class="slide__video" autoplay muted loop playsinline preload="auto">
           <source src="../video%20and%20pcitures/Video/screensaver%20slide.mp4" type="video/mp4" />
         </video>
@@ -76,7 +78,152 @@
         />
         <div class="slide__inner slide__inner--title">
           <p class="slide__eyebrow js-reveal">Блок 1</p>
-          <h2 class="slide__title js-reveal">Контейнеризація MCP сервера</h2>
+          <h2 class="slide__title js-reveal">Навіщо Docker для MCP</h2>
+          <p class="slide__subtitle js-reveal">HTTP уже є. Середовище все ще на ноутбуці</p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Контекст після Streamable HTTP">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Навіщо Docker для MCP</p>
+          <h2 class="slide__heading js-reveal">Це ще не деплой</h2>
+          <p class="slide__lead js-reveal">
+            qauto MCP server уже працює через <strong>Streamable HTTP</strong>: Cursor ходить на
+            <code>http://127.0.0.1:8001/mcp</code>, credentials — у <strong>headers</strong>.
+          </p>
+          <p class="slide__lead js-reveal">
+            Це сервер на <strong>одній</strong> машині. Щоб його запустити, потрібні Python 3.14, uv, залежності й сертифікати.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Основна проблема">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Навіщо Docker для MCP</p>
+          <h2 class="slide__heading js-reveal">Основна проблема</h2>
+          <p class="slide__lead js-reveal">
+            Локальний <code>uv run python -m qauto_mcp</code> прив’язує <strong>MCP Server</strong> до хоста. Середовище живе на ноутбуці, а не в проєкті.
+          </p>
+          <p class="slide__lead js-reveal">
+            Колега, CI або хмарний хост мають повторити те саме встановлення. Інакше знову «у мене працює».
+          </p>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Наслідки">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Навіщо Docker для MCP</p>
+          <h2 class="slide__heading js-reveal">Наслідки</h2>
+          <ul class="content-list">
+            <li class="content-list__item js-reveal">На іншій машині немає Python 3.14 або uv — сервер не стартує</li>
+            <li class="content-list__item js-reveal">Версії бібліотек роз’їжджаються. Той самий код поведиться по-різному</li>
+            <li class="content-list__item js-reveal">Процес живе, поки відкритий термінал. Закрив — Host втрачає endpoint</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="slide" aria-label="Рішення: контейнер">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content">
+          <p class="slide__eyebrow js-reveal">Навіщо Docker для MCP</p>
+          <h2 class="slide__heading js-reveal">Рішення: контейнер</h2>
+          <p class="slide__lead js-reveal">
+            <strong>Docker</strong> пакує сервер разом із середовищем: Python, uv, залежності, код, каталог авто й CA-bundle.
+          </p>
+          <p class="slide__lead js-reveal">
+            Один контейнер — один процес: <strong>FastMCP</strong> на Streamable HTTP, endpoint <code>/mcp</code>. Базу, Redis і nginx не додаємо.
+          </p>
+        </div>
+      </section>
+
+      <section class="slide slide--diagram diagram-slide" aria-label="Схема як працює контейнер">
+        <video class="slide__video" autoplay muted loop playsinline preload="auto">
+          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
+        </video>
+        <div class="slide__scrim slide__scrim--plan"></div>
+        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
+        <div class="slide__inner slide__inner--content slide__inner--diagram">
+          <p class="slide__eyebrow js-reveal">Навіщо Docker для MCP</p>
+          <h2 class="slide__heading js-reveal">Як це працює</h2>
+          <div
+            class="mcp-flow js-reveal"
+            role="img"
+            aria-label="Cursor надсилає HTTP POST на порт хоста, Compose прокидує запит у контейнер FastMCP, сервер ходить до QAuto API"
+          >
+            <div class="mcp-flow__lane">
+              <div class="mcp-flow__agents mcp-flow__step">
+                <div class="mcp-flow__node mcp-flow__node--agent">
+                  <span class="mcp-flow__badge">AI</span>
+                  <span class="mcp-flow__label">Cursor</span>
+                  <span class="mcp-flow__hint">mcp.json · POST /mcp</span>
+                </div>
+                <p class="mcp-flow__note">Ходить на порт хоста, не всередину контейнера</p>
+              </div>
+
+              <div class="mcp-flow__hub-group mcp-flow__step">
+                <div class="mcp-flow__pipe mcp-flow__pipe--left" aria-hidden="true">
+                  <span class="mcp-flow__line"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--a"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--b"></span>
+                </div>
+                <div class="mcp-flow__hub">
+                  <span class="mcp-flow__hub-ring" aria-hidden="true"></span>
+                  <span class="mcp-flow__hub-tag">Docker</span>
+                  <span class="mcp-flow__hub-title">Compose</span>
+                  <span class="mcp-flow__hub-sub">qauto-mcp · :8001</span>
+                </div>
+              </div>
+
+              <div class="mcp-flow__services-group mcp-flow__step">
+                <div class="mcp-flow__pipe mcp-flow__pipe--right" aria-hidden="true">
+                  <span class="mcp-flow__line"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--a"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--b"></span>
+                  <span class="mcp-flow__dot mcp-flow__dot--c"></span>
+                </div>
+                <div class="mcp-flow__services">
+                  <div class="mcp-flow__node mcp-flow__node--service">
+                    <span class="mcp-flow__service-icon">HTTP</span>
+                    <span class="mcp-flow__label">FastMCP</span>
+                  </div>
+                  <div class="mcp-flow__node mcp-flow__node--service">
+                    <span class="mcp-flow__service-icon">/mcp</span>
+                    <span class="mcp-flow__label">Endpoint</span>
+                  </div>
+                  <div class="mcp-flow__node mcp-flow__node--service">
+                    <span class="mcp-flow__service-icon">API</span>
+                    <span class="mcp-flow__label">QAuto</span>
+                  </div>
+                  <div class="mcp-flow__node mcp-flow__node--service">
+                    <span class="mcp-flow__service-icon">OK</span>
+                    <span class="mcp-flow__label">/health</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="mcp-flow__caption mcp-flow__step">
+              Cursor шле <strong>POST</strong> на <code>host:8001</code> — Compose прокидує в контейнер, сервер ходить до QAuto API
+            </p>
+          </div>
         </div>
       </section>
 
@@ -89,13 +236,22 @@
         <div class="slide__inner slide__inner--content">
           <p class="slide__eyebrow js-reveal">Фінал заняття</p>
           <h2 class="slide__heading js-reveal">Підсумки</h2>
+          <p class="slide__lead js-reveal">
+            На цій лекції ми розібрали, навіщо <strong>Docker</strong> MCP-серверу після Streamable HTTP і як упакувати qauto MCP в один контейнер через <strong>Compose</strong>.
+          </p>
+          <p class="slide__lead js-reveal">
+            Контейнер дає однаковий запуск без локального Python і uv: <strong>Host</strong> підключається до того самого HTTP endpoint, а секрети лишаються у клієнті.
+          </p>
+          <p class="slide__lead js-reveal">
+            У наступній лекції перейдемо до <strong>Security in MCP</strong> — ризики tools і skills та чому локальний запуск чужого коду не є «просто розширенням агента».
+          </p>
         </div>
       </section>
     </div>
 
     <nav class="nav" aria-label="Навігація по слайдах">
       <button type="button" class="nav__btn" id="prev" aria-label="Попередній слайд">←</button>
-      <span class="nav__progress" id="navProgress" aria-live="polite">1 / 4</span>
+      <span class="nav__progress" id="navProgress" aria-live="polite">1 / 9</span>
       <div class="nav__dots" id="dots" role="tablist" aria-label="Слайди"></div>
       <button type="button" class="nav__btn" id="next" aria-label="Наступний слайд">→</button>
     </nav>

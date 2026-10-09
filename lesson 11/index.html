@@ -355,12 +355,23 @@
         <div class="slide__inner slide__inner--content">
           <p class="slide__eyebrow js-reveal">Логування</p>
           <h2 class="slide__heading js-reveal">Два рівні логування</h2>
-          <p class="slide__lead js-reveal">
-            Після міграції на <strong>Streamable HTTP</strong> зручніше дивитися, що відбувається на сервері. Логування — не одне ціле: є рівень <strong>MCP / transport</strong> (framework) і рівень <strong>додатку</strong> (виклики QAuto API у tools).
-          </p>
-          <p class="slide__lead js-reveal">
-            На <strong>stdio</strong> <code>stdout</code> зайнятий протоколом MCP — туди не можна писати діагностику. Після переходу на <strong>Streamable HTTP</strong> transport не займає <code>stdout</code>: у конструкторі <code>FastMCP(...)</code> задаємо <code>log_level</code>.
-          </p>
+          <p class="slide__lead js-reveal">Після міграції на <strong>Streamable HTTP</strong> логування — не одне ціле. Це два окремі шари.</p>
+          <div class="grid-2">
+            <article class="content-card js-reveal js-step-card">
+              <h3 class="content-card__title">Рівень 1 — MCP / transport</h3>
+              <p>Framework: старт HTTP, обраний transport, вхідні запити на <code>/mcp</code>. На <strong>stdio</strong> <code>stdout</code> зайнятий протоколом. На HTTP задаємо <code>log_level</code> у конструкторі.</p>
+              <pre class="slide__code"><code>mcp = FastMCP(
+    ...,
+    log_level=os.getenv("MCP_LOG_LEVEL", "INFO"),
+)</code></pre>
+            </article>
+            <article class="content-card js-reveal js-step-card">
+              <h3 class="content-card__title">Рівень 2 — додаток</h3>
+              <p>Ваш код: виклики tools і HTTP до QAuto API. Цього <code>log_level</code> FastMCP не дає — потрібен Python <code>logging</code>.</p>
+              <pre class="slide__code"><code>LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+logger.info("tool → %s", name)</code></pre>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -395,15 +406,40 @@
         <div class="slide__inner slide__inner--content">
           <p class="slide__eyebrow js-reveal">Логування</p>
           <h2 class="slide__heading js-reveal">Рівні <code>log_level</code></h2>
-          <p class="slide__lead js-reveal">Рівень — це фільтр «від і вище»: на <code>INFO</code> не видно <code>DEBUG</code>-рядків, на <code>ERROR</code> — ні <code>INFO</code>, ні <code>WARNING</code>.</p>
-          <ul class="content-list">
-            <li class="content-list__item js-reveal"><strong>DEBUG</strong> — максимум деталей: старт/стоп, bind host/port, transport, вхідні запити на <code>/mcp</code></li>
-            <li class="content-list__item js-reveal"><strong>INFO</strong> — робочий режим: сервер стартував, слухає endpoint, прийшов MCP-запит</li>
-            <li class="content-list__item js-reveal"><strong>WARNING</strong> — лише попередження framework</li>
-            <li class="content-list__item js-reveal"><strong>ERROR</strong> — лише помилки на рівні сервера/transport</li>
-            <li class="content-list__item js-reveal"><strong>CRITICAL</strong> — критичні збої, сервер не може продовжувати роботу</li>
-          </ul>
-          <p class="slide__lead js-reveal">Практика для qauto: локально — <code>DEBUG</code>/<code>INFO</code>; shared / production — <code>WARNING</code>/<code>ERROR</code>.</p>
+          <p class="slide__lead js-reveal">Рівень — фільтр «від і вище». Локально — <code>DEBUG</code> / <code>INFO</code>, production — <code>WARNING</code> / <code>ERROR</code>.</p>
+          <div class="proj-grid">
+            <article class="content-card js-reveal js-step-card">
+              <h3 class="content-card__title">DEBUG</h3>
+              <p>Максимум деталей: bind, transport, кожен запит на <code>/mcp</code>.</p>
+              <pre class="slide__code"><code>log_level="DEBUG"
+# Processing request of type CallToolRequest
+# Streamable HTTP session manager started</code></pre>
+            </article>
+            <article class="content-card js-reveal js-step-card">
+              <h3 class="content-card__title">INFO</h3>
+              <p>Робочий режим: сервер стартував і слухає endpoint.</p>
+              <pre class="slide__code"><code>log_level="INFO"
+# Uvicorn running on http://127.0.0.1:8000</code></pre>
+            </article>
+            <article class="content-card js-reveal js-step-card">
+              <h3 class="content-card__title">WARNING</h3>
+              <p>Лише попередження framework, без шуму INFO.</p>
+              <pre class="slide__code"><code>log_level="WARNING"
+# Stateless HTTP is currently experimental</code></pre>
+            </article>
+            <article class="content-card js-reveal js-step-card">
+              <h3 class="content-card__title">ERROR</h3>
+              <p>Помилки сервера / transport, коли запит не обробився.</p>
+              <pre class="slide__code"><code>log_level="ERROR"
+# Error processing request from 127.0.0.1</code></pre>
+            </article>
+            <article class="content-card js-reveal js-step-card">
+              <h3 class="content-card__title">CRITICAL</h3>
+              <p>Сервер не може продовжувати роботу.</p>
+              <pre class="slide__code"><code>log_level="CRITICAL"
+# Failed to bind 127.0.0.1:8000</code></pre>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -441,9 +477,6 @@
           <p class="slide__lead js-reveal">
             <code>log_level</code> покриває лише <strong>transport</strong>. Щоб бачити, що робить qauto server — виклики tools, запити до QAuto API, час відповіді — потрібен окремий шар: <strong>logging</strong> у Python + hooks <strong>httpx</strong> + wrapper для tools.
           </p>
-          <p class="slide__lead js-reveal">
-            Два правила: донастройку логерів робимо <strong>після</strong> <code>mcp = FastMCP(...)</code>, інакше він перезапише конфіг; <code>stderr</code> безпечний і для <strong>stdio</strong>, і для <strong>Streamable HTTP</strong>.
-          </p>
         </div>
       </section>
 
@@ -461,100 +494,6 @@
             <li class="content-list__item js-reveal"><strong>httpcore</strong> на <code>DEBUG</code> засипає stderr трейсами — шум, а не користь</li>
             <li class="content-list__item js-reveal">Вхідний tool видно як <code>CallToolRequest</code> — без імені, аргументів і часу виконання</li>
           </ul>
-          <p class="slide__lead js-reveal">Мета цієї частини — логувати вхідні <strong>tools</strong> і вихідні <strong>HTTP</strong> до QAuto з маскуванням секретів.</p>
-        </div>
-      </section>
-
-      <section class="slide slide--code" aria-label="Env-налаштування логування">
-        <video class="slide__video" autoplay muted loop playsinline preload="auto">
-          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
-        </video>
-        <div class="slide__scrim"></div>
-        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
-        <div class="slide__inner slide__inner--content">
-          <p class="slide__eyebrow js-reveal">Логування</p>
-          <h2 class="slide__heading js-reveal">Env-налаштування</h2>
-          <p class="slide__lead js-reveal">Поруч із <code>MCP_*</code> — змінні для application logging у <code>config.py</code>:</p>
-          <div class="token-card js-reveal">
-            <pre class="slide__code"><code>LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
-LOG_HTTP_BODIES = os.getenv("LOG_HTTP_BODIES", "true").lower() not in ("0", "false", "no")
-LOG_BODY_MAX_CHARS = int(os.getenv("LOG_BODY_MAX_CHARS", "2000"))</code></pre>
-          </div>
-          <p class="slide__lead js-reveal"><strong>LOG_LEVEL</strong> — verbosity логера <code>qauto_mcp</code>; <strong>LOG_HTTP_BODIES</strong> — чи писати тіла запитів; <strong>LOG_BODY_MAX_CHARS</strong> — обрізка довгих JSON.</p>
-        </div>
-      </section>
-
-      <section class="slide slide--code" aria-label="Маскування секретів">
-        <video class="slide__video" autoplay muted loop playsinline preload="auto">
-          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
-        </video>
-        <div class="slide__scrim"></div>
-        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
-        <div class="slide__inner slide__inner--content">
-          <p class="slide__eyebrow js-reveal">Логування</p>
-          <h2 class="slide__heading js-reveal">Маскування секретів</h2>
-          <p class="slide__lead js-reveal">Ключі <code>password</code>, <code>repeatPassword</code>, <code>sid</code>, <code>cookie</code>, <code>authorization</code> замінюються на <code>***</code> у <code>logging_setup.py</code>:</p>
-          <div class="token-card js-reveal">
-            <pre class="slide__code"><code>def redact_body(raw: bytes) -> str:
-    """JSON → рекурсивно маскує ключі → обрізка до LOG_BODY_MAX_CHARS."""
-
-def redact_mapping(data: dict) -> dict:
-    """Для аргументів tool (наприклад credentials.password)."""</code></pre>
-          </div>
-        </div>
-      </section>
-
-      <section class="slide slide--code" aria-label="Вихідні HTTP: event hooks">
-        <video class="slide__video" autoplay muted loop playsinline preload="auto">
-          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
-        </video>
-        <div class="slide__scrim"></div>
-        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
-        <div class="slide__inner slide__inner--content">
-          <p class="slide__eyebrow js-reveal">Логування</p>
-          <h2 class="slide__heading js-reveal">Вихідні HTTP: event hooks</h2>
-          <p class="slide__lead js-reveal">У <code>open_client()</code> передаємо <code>event_hooks</code> в <code>httpx.AsyncClient</code>:</p>
-          <div class="token-card js-reveal">
-            <pre class="slide__code"><code>async def _log_request(request: httpx.Request) -> None:
-    logger.info("→ %s %s", request.method, request.url)
-    if LOG_HTTP_BODIES and request.content:
-        logger.debug("→ body %s", redact_body(request.content))
-
-async def _log_response(response: httpx.Response) -> None:
-    await response.aread()
-    logger.info("← %s %s (%.0f ms)", response.status_code,
-                response.request.url,
-                response.elapsed.total_seconds() * 1000)</code></pre>
-          </div>
-          <p class="slide__lead js-reveal">У stderr з'являться <code>→ POST .../auth/signin</code>, <code>← 200 ... ms</code>, а на <code>DEBUG</code> — тіла з <code>password</code>/<code>sid</code> як <code>***</code>.</p>
-        </div>
-      </section>
-
-      <section class="slide slide--code" aria-label="Вхідні tools: LoggingFastMCP">
-        <video class="slide__video" autoplay muted loop playsinline preload="auto">
-          <source src="../video%20and%20pcitures/Video/ice%20cubes.mp4" type="video/mp4" />
-        </video>
-        <div class="slide__scrim"></div>
-        <div class="slide__glow slide__glow--soft" aria-hidden="true"></div>
-        <div class="slide__inner slide__inner--content">
-          <p class="slide__eyebrow js-reveal">Логування</p>
-          <h2 class="slide__heading js-reveal">Вхідні tools: <code>LoggingFastMCP</code></h2>
-          <p class="slide__lead js-reveal"><code>FastMCP</code> реєструє <code>call_tool</code> всередині <code>__init__</code> — підміна після створення об'єкта не спрацює. Централізований варіант — підклас:</p>
-          <div class="token-card js-reveal">
-            <pre class="slide__code"><code>class LoggingFastMCP(FastMCP):
-    async def call_tool(self, name: str, arguments: dict[str, Any]):
-        started = perf_counter()
-        logger.info("tool → %s %s", name, redact_mapping(arguments))
-        try:
-            result = await super().call_tool(name, arguments)
-        except Exception:
-            logger.exception("tool ✗ %s", name)
-            raise
-        logger.info("tool ← %s ok (%.0f ms)", name,
-                    (perf_counter() - started) * 1000)
-        return result</code></pre>
-          </div>
-          <p class="slide__lead js-reveal">Усі tools (і майбутні) логуються в одному місці — схеми tools не чіпаємо.</p>
         </div>
       </section>
 
@@ -601,7 +540,7 @@ async def _log_response(response: httpx.Response) -> None:
 
     <nav class="nav" aria-label="Навігація по слайдах">
       <button type="button" class="nav__btn" id="prev" aria-label="Попередній слайд">←</button>
-      <span class="nav__progress" id="navProgress" aria-live="polite">1 / 22</span>
+      <span class="nav__progress" id="navProgress" aria-live="polite">1 / 19</span>
       <div class="nav__dots" id="dots" role="tablist" aria-label="Слайди"></div>
       <button type="button" class="nav__btn" id="next" aria-label="Наступний слайд">→</button>
     </nav>
